@@ -1,7 +1,9 @@
+/* tslint:disable:no-empty */
+
 import * as GeneratorModel from './generator-models'
 import * as GeneratorWriter from './generator-writer'
 
-const fs = require('fs')
+import * as fs from 'fs'
 
 describe('generator-writer', () => {
 

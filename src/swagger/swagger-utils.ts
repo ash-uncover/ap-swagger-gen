@@ -12,7 +12,7 @@ import type {
     SwaggerSchemaProperties,
     SwaggerSchemaAllOf,
     SwaggerMethod
-} from './swagger-model'
+} from './swagger-model.js'
 
 import type {
     Model,
@@ -21,9 +21,9 @@ import type {
     ServiceEndpoint,
     ServiceEndpointParameter,
     ServiceNode,
-} from '../generator/generator-models'
+} from '../generator/generator-models.js'
 
-import * as utils from '../utils/utils'
+import * as utils from '../utils/utils.js'
 
 // --------------------------------------------
 // Schemas

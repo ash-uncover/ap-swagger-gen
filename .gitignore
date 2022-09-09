@@ -9,6 +9,7 @@ build
 dist
 dist-dbg
 target
+__coverage
 
 # Config files
 spa.config.js

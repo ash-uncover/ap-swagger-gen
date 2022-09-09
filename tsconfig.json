@@ -3,10 +3,8 @@
         "allowJs": true,
         "checkJs": true,
         "declaration": true,
-        "lib": [
-            "esnext",
-            "DOM",
-        ],
+        "module": "ES6",
+        "moduleResolution": "node",
         "noImplicitAny": true,
         "outDir": "./build",
         "sourceMap": true,
@@ -14,6 +12,7 @@
 		"target": "es5"
     },
     "exclude": [
+        "bin",
         "node_modules",
         "**/*.test.*",
         "**/*..*",

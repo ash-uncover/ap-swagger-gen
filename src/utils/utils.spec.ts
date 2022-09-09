@@ -1,3 +1,5 @@
+/* tslint:disable:no-empty */
+
 import * as utils from './utils'
 
 describe('utils', () => {

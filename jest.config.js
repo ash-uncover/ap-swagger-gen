@@ -1,9 +1,9 @@
 module.exports = {
     "modulePaths": [
-      "tools",
+      "src",
     ],
     "testMatch": [
-      "**/tools/**/*.spec.ts"
+      "**/src/**/*.spec.ts"
     ],
     "moduleFileExtensions": [
       'ts',
@@ -17,11 +17,11 @@ module.exports = {
       '^.+\\.ts?$': 'ts-jest',
     },
     "collectCoverageFrom": [
-      "tools/**/*.ts",
-      "!tools/**/*.script.ts",
+      "src/**/*.ts",
+      "!src/**/*.script.ts",
       "!**/node_modules/**",
     ],
-    "coverageDirectory": "target/coverage-tools",
+    "coverageDirectory": "__coverage",
     "coverageThreshold": {
       "global": {
         "branches": 100,
