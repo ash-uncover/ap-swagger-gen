@@ -1,1 +1,1 @@
-# ap-swagger-gen
+# ap-swagger-generator

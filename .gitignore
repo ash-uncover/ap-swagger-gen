@@ -1,0 +1,14 @@
+# Logs
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# Distribution & builds
+build
+dist
+dist-dbg
+target
+
+# Config files
+spa.config.js
