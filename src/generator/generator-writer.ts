@@ -1,15 +1,14 @@
+import * as fs from 'fs'
+
 import type {
     Model,
     ModelProperty,
     Service,
     ServiceEndpoint,
     ServiceNode,
-} from './generator-models'
+} from './generator-models.js'
 
-import { capitalize, indent } from '../utils/utils'
-
-const fs = require('fs')
-
+import { capitalize, indent } from '../utils/utils.js'
 
 // MODELS //
 

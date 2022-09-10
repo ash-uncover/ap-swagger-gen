@@ -1,1 +1,1 @@
-# ap-swagger-generator
+# js-swagger-generator

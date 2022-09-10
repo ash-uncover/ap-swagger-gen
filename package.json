@@ -1,6 +1,6 @@
 {
     "name": "@uncover/js-swagger-generator",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "aSH <ash.uncover@gmail.com>",
     "description": "Javascript code generator based on swagger format",
     "license": "ISC",
@@ -10,9 +10,13 @@
     },
     "main": "build/index.js",
     "types": "build/index.d.ts",
-    "files": [
-        "build/**/*"
-    ],
+    "type": "module",
+    "bin": {
+        "js-swagger-generator": "./bin/js-swagger-generator.js"
+    },
+    "engines": {
+        "node": ">=12.0.0"
+    },
     "scripts": {
         "build": "tsc",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.js\" \"src/**/*.jsx\"",
