@@ -3,8 +3,6 @@
 [![npm version](https://badge.fury.io/js/@uncover%2Fjs-swagger-generator.svg)](https://badge.fury.io/js/@uncover%2Fjs-swagger-generator)
 ![Last Push](https://github.com/ash-uncover/js-swagger-generator/actions/workflows/PUSH-publish.yml/badge.svg)
 
-Package information on [npm](https://www.npmjs.com/package/@uncover/js-swagger-generator)
-
 ## Usage
 
 ### Installation
@@ -15,4 +13,12 @@ Install with npm
 npm i --save-d @uncover/js-swagger-generator
 ```
 
-### Command
+### Commands
+
+| Option | Description |
+| ------ | ----------- |
+| --help | Display help |
+| --files * | Pointer to a swagger file or to a directory containing swagger files |
+| --output * | Root directory for the output |
+
+## Output
