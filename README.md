@@ -1,5 +1,7 @@
 # js-swagger-generator
 
+![Last Push](https://github.com/github/ash-uncover/js-swagger-generator/actions/workflows/PUSH-publish.yml/badge.svg)
+
 Package information on [npm](https://www.npmjs.com/package/@uncover/js-swagger-generator)
 
 ## Usage
