@@ -1,9 +1,7 @@
 # js-swagger-generator
 
+[![npm version](https://badge.fury.io/js/@uncover%2Fjs-swagger-generator.svg)](https://badge.fury.io/js/@uncover%2Fjs-swagger-generator)
 ![Last Push](https://github.com/ash-uncover/js-swagger-generator/actions/workflows/PUSH-publish.yml/badge.svg)
-
-[![Push](https://github.com/ash-uncover/js-swagger-generator/workflows/PUSH-publish/badge.svg
-)](https://github.com/ash-uncover/js-swagger-generator/actions/workflows/PUSH-publish.yml)
 
 Package information on [npm](https://www.npmjs.com/package/@uncover/js-swagger-generator)
 
