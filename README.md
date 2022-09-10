@@ -21,4 +21,10 @@ npm i --save-d @uncover/js-swagger-generator
 | --files * | Pointer to a swagger file or to a directory containing swagger files |
 | --output * | Root directory for the output |
 
+**Example**
+
+``
+js-swagger-generator --files=my-api-docs.json --output=src
+```
+
 ## Output
