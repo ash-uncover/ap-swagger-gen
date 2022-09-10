@@ -23,7 +23,7 @@ npm i --save-d @uncover/js-swagger-generator
 
 **Example**
 
-``
+```
 js-swagger-generator --files=my-api-docs.json --output=src
 ```
 
