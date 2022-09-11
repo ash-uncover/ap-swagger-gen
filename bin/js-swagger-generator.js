@@ -38,7 +38,7 @@ const actualArgs = {
     files: null
 }
 
-console.log ('')
+console.log('')
 
 const exitWithError = (msg) => {
     console.log('')
@@ -91,9 +91,11 @@ if (invalidArgs || actualArgs.files === null || actualArgs.output === null) {
     exitWithError('Invalid argument: use --? for help')
 }
 
+if (!fs.existsSync(actualArgs.output)){
+    fs.mkdirSync(actualArgs.output, { recursive: true });
+}
 const filesStats = fs.lstatSync(actualArgs.files)
 const outputStats = fs.lstatSync(actualArgs.output)
-
 if (!outputStats.isDirectory()) {
     console.error(`Invalid argument: output must point to a directory`)
     exitWithError('Invalid argument: use --? for help')
@@ -109,8 +111,9 @@ if (filesStats.isDirectory()) {
                 reject(err)
             } else {
                 files.forEach((file) => {
-                    console.log(`  > file: '${file}'`)
-                    filesList.push(file)
+                    const path = `${actualArgs.files}/${file}`
+                    console.log(`  > file: '${path}'`)
+                    filesList.push(path)
                 })
                 resolve(filesList)
             }
@@ -141,6 +144,10 @@ listPromise.then((files) => {
         console.log(`  > building service: '${service}'`)
 
         try {
+            if (!fs.existsSync(`${actualArgs.output}/services/${service}`)){
+                fs.mkdirSync(`${actualArgs.output}/services/${service}`, { recursive: true });
+            }
+
             const modelsDefinition = SwaggerUtils.buildSchemas(docs.components.schemas)
             GeneratorWriter.writeModels(`${actualArgs.output}/services/${service}/${service}.model.ts`, modelsDefinition)
             files.push(`${actualArgs.output}/services/${service}/${service}.model.ts`)
@@ -158,9 +165,8 @@ listPromise.then((files) => {
             console.log(`    > output index: '${actualArgs.output}/services/${service}/index.ts'`)
 
         } catch (err) {
-            console.error('*********************************************')
-            console.error(`error while loading service: ${service}`)
-            console.error(err)
+            console.error(`  > ERROR while loading service: ${service}`)
+            console.error(`    > ${err}`)
         }
     })
 
