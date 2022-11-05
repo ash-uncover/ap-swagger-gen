@@ -149,27 +149,27 @@ export const convertStructureNode = (service:Service, depth:number, node: Servic
     const result:string[] = []
     result.push(`${indent(depth)}'${node.name}': {`)
     if (node.post) {
-        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.post)
-        const paramsTypes = convertEndpointParams(endpoint!, true)
-        const params = convertEndpointParams(endpoint!)
+        const endpointPost = service.endpoints.find(endpoint => endpoint.name === node.post)
+        const paramsTypes = convertEndpointParams(endpointPost!, true)
+        const params = convertEndpointParams(endpointPost!)
         result.push(`${indent(depth + 1)}post: (${paramsTypes.join(', ')}) => ${node.post}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.get) {
-        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.get)
-        const paramsTypes = convertEndpointParams(endpoint!, true)
-        const params = convertEndpointParams(endpoint!)
+        const endpointGet = service.endpoints.find(endpoint => endpoint.name === node.get)
+        const paramsTypes = convertEndpointParams(endpointGet!, true)
+        const params = convertEndpointParams(endpointGet!)
         result.push(`${indent(depth + 1)}get: (${paramsTypes.join(', ')}) => ${node.get}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.put) {
-        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.put)
-        const paramsTypes = convertEndpointParams(endpoint!, true)
-        const params = convertEndpointParams(endpoint!)
+        const endpointPut = service.endpoints.find(endpoint => endpoint.name === node.put)
+        const paramsTypes = convertEndpointParams(endpointPut!, true)
+        const params = convertEndpointParams(endpointPut!)
         result.push(`${indent(depth + 1)}put: (${paramsTypes.join(', ')}) => ${node.put}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.delete) {
-        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.delete)
-        const paramsTypes = convertEndpointParams(endpoint!, true)
-        const params = convertEndpointParams(endpoint!)
+        const endpointDelete = service.endpoints.find(endpoint => endpoint.name === node.delete)
+        const paramsTypes = convertEndpointParams(endpointDelete!, true)
+        const params = convertEndpointParams(endpointDelete!)
         result.push(`${indent(depth + 1)}delete: (${paramsTypes.join(', ')}) => ${node.delete}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.nodes) {
