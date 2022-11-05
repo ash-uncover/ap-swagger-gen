@@ -50,7 +50,7 @@ export const writeService = (file:string, models:Model[], service:Service) => {
 
 export const convertModelImport = (name:string, models:Model[]):string => {
     const result:string[] = []
-    result.push(`import Service from '../service'`)
+    result.push(`import { Service } from '@uncover/js-utils-fetch'`)
     result.push(`import {`)
     result.push(...models.map(model => `${indent(1)}${model.name},`))
     result.push(`} from './${name}.model'`)
@@ -76,22 +76,13 @@ export const convertEndpointComment = (service:Service, endpoint:ServiceEndpoint
 
 export const convertEndpoint = (service:Service, endpoint:ServiceEndpoint):string => {
     const result:string[] = []
-    const params:string[] = []
-    if (endpoint.urlParams?.length) {
-        params.push(...endpoint.urlParams.map(param => `${param.name}:${param.type}`))
-    }
-    if (endpoint.queryParams?.length) {
-        const queryParams = endpoint.queryParams.map(param => `'${param.name}'${param.required ? '' : '?'}:${param.type}`)
-        params.push(`query:{${queryParams.join(', ')}}`)
-    }
-    if (endpoint.payloadType) {
-        params.push(`payload:${endpoint.payloadType}`)
-    }
-    result.push(`export const ${endpoint.name} = async (${params.join(', ')}) => {`)
+    const params:string[] = convertEndpointParams(endpoint, true)
+
+    result.push(`export const ${endpoint.name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
     let url = endpoint.url.split('{').join('${')
     if (endpoint.queryParams?.length) {
         url += '?'
-        url += endpoint.queryParams.map(param => `${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}`).join('&')
+            url += endpoint.queryParams.map(param => `${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}`).join('&')
     }
     result.push(`${indent(1)}const url = \`${url}\``)
     result.push(`${indent(1)}const options = {`)
@@ -104,7 +95,7 @@ export const convertEndpoint = (service:Service, endpoint:ServiceEndpoint):strin
         }
     }
     result.push(`${indent(1)}}`)
-    result.push(`${indent(1)}const response = await ${capitalize(service.name)}Service.fetch(url, options)`)
+    result.push(`${indent(1)}const response = await service.fetch(url, options)`)
     result.push(`${indent(1)}const responseData = await response.json()`)
     result.push(`${indent(1)}return responseData`)
     result.push(`}`)
@@ -112,40 +103,77 @@ export const convertEndpoint = (service:Service, endpoint:ServiceEndpoint):strin
     return result.join('\n')
 }
 
+export const convertEndpointParams = (endpoint:ServiceEndpoint, showType?:boolean):string[] => {
+    const params:string[] = []
+    if (endpoint.urlParams?.length) {
+        params.push(...endpoint.urlParams.map(param => `${param.name}${showType ? `:${param.type}` : ''}`))
+    }
+    if (endpoint.queryParams?.length) {
+        if (showType) {
+            const queryParams = endpoint.queryParams.map(param => `'${param.name}'${param.required ? '' : '?'}:${param.type}`)
+            params.push(`query:{${queryParams.join(', ')}}`)
+        } else {
+            params.push('query')
+        }
+    }
+    if (endpoint.payloadType) {
+        if (showType) {
+            params.push(`payload:${endpoint.payloadType}`)
+        } else {
+            params.push('payload')
+        }
+    }
+    return params
+}
+
 export const convertStructure = (service: Service):string => {
     const result:string[] = []
-    result.push(`const ${capitalize(service.name)}Service = new Service('${service.urlBase}', {`)
-    result.push(convertStructureNodes(1, service.structure))
-    result.push(`})`)
-    result.push(``)
+    result.push(`const ${capitalize(service.name)}Service = (config: any) => {`)
+    result.push(`   const service = new Service(config, '${service.urlBase}', {`)
+    result.push(convertStructureNodes(service, 1, service.structure))
+    result.push(`   })`)
+    result.push(`   return service`)
+    result.push(`}`)
     result.push(`export default ${capitalize(service.name)}Service`)
     result.push(``)
     return result.join('\n')
 }
 
-export const convertStructureNodes = (depth:number, nodes: ServiceNode[]):string => {
+export const convertStructureNodes = (service:Service, depth:number, nodes: ServiceNode[]):string => {
     const result:string[] = []
-    result.push(...nodes.map(node => convertStructureNode(depth, node)))
+    result.push(...nodes.map(node => convertStructureNode(service, depth, node)))
     return result.join('\n')
 }
 
-export const convertStructureNode = (depth:number, node: ServiceNode):string => {
+export const convertStructureNode = (service:Service, depth:number, node: ServiceNode):string => {
     const result:string[] = []
     result.push(`${indent(depth)}'${node.name}': {`)
     if (node.post) {
-        result.push(`${indent(depth + 1)}post: ${node.post},`)
+        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.post)
+        const paramsTypes = convertEndpointParams(endpoint!, true)
+        const params = convertEndpointParams(endpoint!)
+        result.push(`${indent(depth + 1)}post: (${paramsTypes.join(', ')}) => ${node.post}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.get) {
-        result.push(`${indent(depth + 1)}get: ${node.get},`)
+        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.get)
+        const paramsTypes = convertEndpointParams(endpoint!, true)
+        const params = convertEndpointParams(endpoint!)
+        result.push(`${indent(depth + 1)}get: (${paramsTypes.join(', ')}) => ${node.get}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.put) {
-        result.push(`${indent(depth + 1)}put: ${node.put},`)
+        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.put)
+        const paramsTypes = convertEndpointParams(endpoint!, true)
+        const params = convertEndpointParams(endpoint!)
+        result.push(`${indent(depth + 1)}put: (${paramsTypes.join(', ')}) => ${node.put}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.delete) {
-        result.push(`${indent(depth + 1)}delete: ${node.delete},`)
+        const endpoint = service.endpoints.find(endpoint => endpoint.name === node.delete)
+        const paramsTypes = convertEndpointParams(endpoint!, true)
+        const params = convertEndpointParams(endpoint!)
+        result.push(`${indent(depth + 1)}delete: (${paramsTypes.join(', ')}) => ${node.delete}(service${params.length ? ', ' : ''}${params.join(', ')}),`)
     }
     if (node.nodes) {
-        result.push(...node.nodes.map(n => convertStructureNode(depth + 1, n)))
+        result.push(...node.nodes.map(n => convertStructureNode(service, depth + 1, n)))
     }
     result.push(`${indent(depth)}},`)
     return result.join('\n')

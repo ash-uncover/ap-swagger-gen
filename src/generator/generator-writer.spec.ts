@@ -503,6 +503,13 @@ describe('generator-writer', () => {
 
     describe('convertStructureNodes', () => {
 
+        const service:GeneratorModel.Service = {
+            name: 'serviceName',
+            urlBase: 'serviceUrlBase',
+            endpoints: [],
+            structure: [],
+        }
+
         let stubConvertStructureNode:jest.SpyInstance
 
         beforeEach(() => {
@@ -522,7 +529,7 @@ describe('generator-writer', () => {
                 { id: 'node2', name: 'node2', nodes: [] },
             ]
             // Execution
-            const result = GeneratorWriter.convertStructureNodes(depth, nodes)
+            const result = GeneratorWriter.convertStructureNodes(service, depth, nodes)
             // Assertion
             const expected = [
                 `2 node1`,
@@ -536,6 +543,13 @@ describe('generator-writer', () => {
 
     describe('convertStructureNode', () => {
 
+        const service:GeneratorModel.Service = {
+            name: 'serviceName',
+            urlBase: 'serviceUrlBase',
+            endpoints: [],
+            structure: [],
+        }
+
         test('when the node is a leaf with no endpoints', () => {
             // Declaration
             const depth = 2
@@ -545,7 +559,7 @@ describe('generator-writer', () => {
                 nodes: []
             }
             // Execution
-            const result = GeneratorWriter.convertStructureNode(depth, node)
+            const result = GeneratorWriter.convertStructureNode(service, depth, node)
             // Assertion
             const expected = [
                 `        'node': {`,
@@ -567,7 +581,7 @@ describe('generator-writer', () => {
                 nodes: []
             }
             // Execution
-            const result = GeneratorWriter.convertStructureNode(depth, node)
+            const result = GeneratorWriter.convertStructureNode(service, depth, node)
             // Assertion
             const expected = [
                 `        'node': {`,
@@ -593,7 +607,7 @@ describe('generator-writer', () => {
                 }]
             }
             // Execution
-            const result = GeneratorWriter.convertStructureNode(depth, node)
+            const result = GeneratorWriter.convertStructureNode(service, depth, node)
             // Assertion
             const expected = [
                 `        'parent': {`,
