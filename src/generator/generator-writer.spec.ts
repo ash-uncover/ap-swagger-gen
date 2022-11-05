@@ -7,11 +7,11 @@ import * as fs from 'fs'
 
 describe('generator-writer', () => {
 
-    let stubFsWriteFileSync:jest.SpyInstance
+    let stubFsWriteFileSync: jest.SpyInstance
 
     beforeEach(() => {
         stubFsWriteFileSync = jest.spyOn(fs, 'writeFileSync')
-        stubFsWriteFileSync.mockImplementation(() => {})
+        stubFsWriteFileSync.mockImplementation(() => { })
     })
 
     afterEach(() => {
@@ -24,11 +24,11 @@ describe('generator-writer', () => {
 
     describe('writeModel', () => {
 
-        let stubConvertModel:jest.SpyInstance
+        let stubConvertModel: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertModel = jest.spyOn(GeneratorWriter, 'convertModel')
-            stubConvertModel.mockImplementation(() => {})
+            stubConvertModel.mockImplementation(() => { })
         })
 
         afterEach(() => {
@@ -38,7 +38,7 @@ describe('generator-writer', () => {
         test('when no models are provided', () => {
             // Declaration
             const file = 'file'
-            const models:GeneratorModel.Model[] = []
+            const models: GeneratorModel.Model[] = []
             // Execution
             const result = GeneratorWriter.writeModels(file, models)
             // Assertion
@@ -49,7 +49,7 @@ describe('generator-writer', () => {
         test('when some models are provided', () => {
             // Declaration
             const file = 'file'
-            const models:GeneratorModel.Model[] = [
+            const models: GeneratorModel.Model[] = [
                 { name: 'name', description: 'description', properties: [] },
             ]
             // Execution
@@ -64,7 +64,7 @@ describe('generator-writer', () => {
 
     describe('convertModel', () => {
 
-        let stubConvertModelProperty:jest.SpyInstance
+        let stubConvertModelProperty: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertModelProperty = jest.spyOn(GeneratorWriter, 'convertModelProperty')
@@ -77,7 +77,7 @@ describe('generator-writer', () => {
 
         test('build the correct wrapper for model', () => {
             // Declaration
-            const model:GeneratorModel.Model = {
+            const model: GeneratorModel.Model = {
                 name: 'name',
                 description: 'description',
                 properties: [
@@ -100,7 +100,7 @@ describe('generator-writer', () => {
 
         test('build the correct wrapper for model with extends', () => {
             // Declaration
-            const model:GeneratorModel.Model = {
+            const model: GeneratorModel.Model = {
                 name: 'name',
                 description: 'description',
                 extends: [
@@ -126,7 +126,7 @@ describe('generator-writer', () => {
 
         test('when the property is required', () => {
             // Declaration
-            const property:GeneratorModel.ModelProperty = {
+            const property: GeneratorModel.ModelProperty = {
                 name: 'property',
                 required: true,
                 type: 'type'
@@ -134,13 +134,13 @@ describe('generator-writer', () => {
             // Execution
             const result = GeneratorWriter.convertModelProperty(property)
             // Assertion
-            const expected = '    property: type'
+            const expected = "    'property': type"
             expect(result).toEqual(expected)
         })
 
         test('when the property is not required', () => {
             // Declaration
-            const property:GeneratorModel.ModelProperty = {
+            const property: GeneratorModel.ModelProperty = {
                 name: 'property',
                 required: false,
                 type: 'type'
@@ -148,7 +148,7 @@ describe('generator-writer', () => {
             // Execution
             const result = GeneratorWriter.convertModelProperty(property)
             // Assertion
-            const expected = '    property?: type'
+            const expected = "    'property'?: type"
             expect(result).toEqual(expected)
         })
     })
@@ -157,9 +157,9 @@ describe('generator-writer', () => {
 
     describe('writeService', () => {
 
-        let stubConvertModelImport:jest.SpyInstance
-        let stubConvertEndpoint:jest.SpyInstance
-        let stubConvertStructure:jest.SpyInstance
+        let stubConvertModelImport: jest.SpyInstance
+        let stubConvertEndpoint: jest.SpyInstance
+        let stubConvertStructure: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertModelImport = jest.spyOn(GeneratorWriter, 'convertModelImport')
@@ -179,8 +179,8 @@ describe('generator-writer', () => {
         test('properly calls subsequent methods', () => {
             // Declaration
             const file = 'file'
-            const models:GeneratorModel.Model[] = []
-            const service:GeneratorModel.Service = {
+            const models: GeneratorModel.Model[] = []
+            const service: GeneratorModel.Service = {
                 name: 'name',
                 urlBase: 'urlBase',
                 endpoints: [{ name: 'endpointName', description: 'endpointDescription', url: 'endpointUrl', method: 'GET' }],
@@ -202,8 +202,8 @@ describe('generator-writer', () => {
 
         test('properly build the import for givne models', () => {
             // Declaration
-            const name:string = 'name'
-            const models:GeneratorModel.Model[] = [
+            const name: string = 'name'
+            const models: GeneratorModel.Model[] = [
                 { name: 'modelName1', description: '', properties: [] },
                 { name: 'modelName2', description: '', properties: [] },
             ]
@@ -211,7 +211,7 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertModelImport(name, models)
             // Assertion
             const expected = [
-                `import Service from '../service'`,
+                `import { Service } from '@uncover/js-utils-fetch'`,
                 'import {',
                 '    modelName1,',
                 '    modelName2,',
@@ -228,13 +228,13 @@ describe('generator-writer', () => {
 
         test('basic GET endpoint without params', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -254,13 +254,13 @@ describe('generator-writer', () => {
 
         test('basic GET endpoint with url params', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -285,13 +285,13 @@ describe('generator-writer', () => {
 
         test('basic GET endpoint with query params', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -322,13 +322,13 @@ describe('generator-writer', () => {
 
         test('basic GET endpoint without params', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -338,12 +338,12 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertEndpoint(service, endpoint)
             // Assertion
             const expected = [
-                'export const endpointName = async () => {',
+                'export const endpointName = async (service:any) => {',
                 '    const url = `endpointUrl`',
                 '    const options = {',
                 `        method: 'GET',`,
                 '    }',
-                '    const response = await ServiceNameService.fetch(url, options)',
+                '    const response = await service.fetch(url, options)',
                 '    const responseData = await response.json()',
                 '    return responseData',
                 `}`,
@@ -354,13 +354,13 @@ describe('generator-writer', () => {
 
         test('basic DELETE endpoint with URL params', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -374,12 +374,12 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertEndpoint(service, endpoint)
             // Assertion
             const expected = [
-                'export const endpointName = async (id:string, value:boolean) => {',
+                'export const endpointName = async (service:any, id:string, value:boolean) => {',
                 '    const url = `endpointUrl`',
                 '    const options = {',
                 `        method: 'DELETE',`,
                 '    }',
-                '    const response = await ServiceNameService.fetch(url, options)',
+                '    const response = await service.fetch(url, options)',
                 '    const responseData = await response.json()',
                 '    return responseData',
                 `}`,
@@ -390,13 +390,13 @@ describe('generator-writer', () => {
 
         test('basic POST endpoint with payload, query params & type any', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -411,13 +411,13 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertEndpoint(service, endpoint)
             // Assertion
             const expected = [
-                `export const endpointName = async (query:{'id':string, 'value'?:boolean}, payload:any) => {`,
+                `export const endpointName = async (service:any, query:{'id':string, 'value'?:boolean}, payload:any) => {`,
                 '    const url = `endpointUrl?id=${encodeURIComponent(String(query[\'id\']))}&value=${encodeURIComponent(String(query[\'value\']))}`',
                 '    const options = {',
                 `        method: 'POST',`,
                 `        body: payload,`,
                 '    }',
-                '    const response = await ServiceNameService.fetch(url, options)',
+                '    const response = await service.fetch(url, options)',
                 '    const responseData = await response.json()',
                 '    return responseData',
                 `}`,
@@ -428,13 +428,13 @@ describe('generator-writer', () => {
 
         test('basic PUT endpoint with payload type string', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
                 structure: [],
             }
-            const endpoint:GeneratorModel.ServiceEndpoint = {
+            const endpoint: GeneratorModel.ServiceEndpoint = {
                 name: 'endpointName',
                 description: 'endpointDescription',
                 url: 'endpointUrl',
@@ -445,13 +445,13 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertEndpoint(service, endpoint)
             // Assertion
             const expected = [
-                'export const endpointName = async (payload:type) => {',
+                'export const endpointName = async (service:any, payload:type) => {',
                 '    const url = `endpointUrl`',
                 '    const options = {',
                 `        method: 'PUT',`,
                 `        body: JSON.stringify(payload),`,
                 '    }',
-                '    const response = await ServiceNameService.fetch(url, options)',
+                '    const response = await service.fetch(url, options)',
                 '    const responseData = await response.json()',
                 '    return responseData',
                 `}`,
@@ -461,11 +461,81 @@ describe('generator-writer', () => {
         })
     })
 
+    // convertEndpointParams //
+
+    describe('convertEndpointParams', () => {
+
+        test('when endpoint has no information', () => {
+            // Declaration
+            const endpoint: GeneratorModel.ServiceEndpoint = {
+                name: 'endpointName',
+                description: 'endpointDescription',
+                url: 'endpointUrl',
+                urlParams: [],
+                queryParams: [],
+            }
+            const showType: boolean = true
+            // Execution
+            const result = GeneratorWriter.convertEndpointParams(endpoint, showType)
+            // Assertion
+            const expected: string[] = []
+            expect(result).toEqual(expected)
+        })
+
+        test('when showType is true', () => {
+            // Declaration
+            const endpoint: GeneratorModel.ServiceEndpoint = {
+                name: 'endpointName',
+                description: 'endpointDescription',
+                url: 'endpointUrl',
+                urlParams: [
+                    { name: 'paramName', type: 'paramType', required: true }
+                ],
+                queryParams: [
+                    { name: 'queryParamName', type: 'queryParamType', required: true }
+                ],
+                payloadType: 'payloadType'
+            }
+            const showType: boolean = true
+            // Execution
+            const result = GeneratorWriter.convertEndpointParams(endpoint, showType)
+            // Assertion
+            const expected: string[] = [
+                'paramName:paramType',
+                `query:{'queryParamName':queryParamType}`,
+                'payload:payloadType'
+            ]
+            expect(result).toEqual(expected)
+        })
+
+        test('when showType is false', () => {
+            // Declaration
+            const endpoint: GeneratorModel.ServiceEndpoint = {
+                name: 'endpointName',
+                description: 'endpointDescription',
+                url: 'endpointUrl',
+                urlParams: [
+                    { name: 'paramName', type: 'paramType', required: true }
+                ],
+                queryParams: [
+                    { name: 'queryParamName', type: 'queryParamType', required: true }
+                ],
+                payloadType: 'payloadType'
+            }
+            const showType: boolean = false
+            // Execution
+            const result = GeneratorWriter.convertEndpointParams(endpoint, showType)
+            // Assertion
+            const expected: string[] = ['paramName', 'query', 'payload']
+            expect(result).toEqual(expected)
+        })
+    })
+
     // convertStructure //
 
     describe('convertStructure', () => {
 
-        let stubConvertStructureNodes:jest.SpyInstance
+        let stubConvertStructureNodes: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertStructureNodes = jest.spyOn(GeneratorWriter, 'convertStructureNodes')
@@ -478,7 +548,7 @@ describe('generator-writer', () => {
 
         test('returns the correct service definition', () => {
             // Declaration
-            const service:GeneratorModel.Service = {
+            const service: GeneratorModel.Service = {
                 name: 'serviceName',
                 urlBase: 'serviceUrlBase',
                 endpoints: [],
@@ -488,10 +558,12 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertStructure(service)
             // Assertion
             const expected = [
-                `const ServiceNameService = new Service('serviceUrlBase', {`,
+                `const ServiceNameService = (config: any) => {`,
+                `    const service = new Service(config, 'serviceUrlBase', {`,
                 'structureNodes',
-                '})',
-                ``,
+                '    })',
+                '    return service',
+                '}',
                 'export default ServiceNameService',
                 '',
             ].join('\n')
@@ -503,18 +575,18 @@ describe('generator-writer', () => {
 
     describe('convertStructureNodes', () => {
 
-        const service:GeneratorModel.Service = {
+        const service: GeneratorModel.Service = {
             name: 'serviceName',
             urlBase: 'serviceUrlBase',
             endpoints: [],
             structure: [],
         }
 
-        let stubConvertStructureNode:jest.SpyInstance
+        let stubConvertStructureNode: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertStructureNode = jest.spyOn(GeneratorWriter, 'convertStructureNode')
-            stubConvertStructureNode.mockImplementation((depth, node) => `${depth} ${node.name}`)
+            stubConvertStructureNode.mockImplementation((arg, depth, node) => `${depth} ${node.name}`)
         })
 
         afterEach(() => {
@@ -524,7 +596,7 @@ describe('generator-writer', () => {
         test('returns the correct node definition', () => {
             // Declaration
             const depth = 2
-            const nodes:GeneratorModel.ServiceNode[] = [
+            const nodes: GeneratorModel.ServiceNode[] = [
                 { id: 'node1', name: 'node1', nodes: [] },
                 { id: 'node2', name: 'node2', nodes: [] },
             ]
@@ -543,17 +615,22 @@ describe('generator-writer', () => {
 
     describe('convertStructureNode', () => {
 
-        const service:GeneratorModel.Service = {
+        const service: GeneratorModel.Service = {
             name: 'serviceName',
             urlBase: 'serviceUrlBase',
-            endpoints: [],
+            endpoints: [
+                { name: 'nodePost', description: '', url: '' },
+                { name: 'nodeGet', description: '', url: '' },
+                { name: 'nodePut', description: '', url: '' },
+                { name: 'nodeDelete', description: '', url: '' }
+            ],
             structure: [],
         }
 
         test('when the node is a leaf with no endpoints', () => {
             // Declaration
             const depth = 2
-            const node:GeneratorModel.ServiceNode = {
+            const node: GeneratorModel.ServiceNode = {
                 id: 'node',
                 name: 'node',
                 nodes: []
@@ -571,7 +648,7 @@ describe('generator-writer', () => {
         test('when the node is a leaf with all endpoints', () => {
             // Declaration
             const depth = 2
-            const node:GeneratorModel.ServiceNode = {
+            const node: GeneratorModel.ServiceNode = {
                 id: 'node',
                 name: 'node',
                 post: 'nodePost',
@@ -585,10 +662,10 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 `        'node': {`,
-                `            post: nodePost,`,
-                `            get: nodeGet,`,
-                `            put: nodePut,`,
-                `            delete: nodeDelete,`,
+                `            post: () => nodePost(service),`,
+                `            get: () => nodeGet(service),`,
+                `            put: () => nodePut(service),`,
+                `            delete: () => nodeDelete(service),`,
                 '        },',
             ].join('\n')
             expect(result).toEqual(expected)
@@ -597,7 +674,7 @@ describe('generator-writer', () => {
         test('when the node is a parent', () => {
             // Declaration
             const depth = 2
-            const node:GeneratorModel.ServiceNode = {
+            const node: GeneratorModel.ServiceNode = {
                 id: 'parent',
                 name: 'parent',
                 nodes: [{
@@ -619,11 +696,69 @@ describe('generator-writer', () => {
         })
     })
 
+    // convertStructureNodeEndpoint //
+
+    describe('convertStructureNodeEndpoint', () => {
+
+        const service: GeneratorModel.Service = {
+            name: 'serviceName',
+            urlBase: 'serviceUrlBase',
+            endpoints: [
+                { name: 'nodePost', description: '', url: '' },
+            ],
+            structure: [],
+        }
+
+        let stubConvertEndpointParams: jest.SpyInstance
+
+        beforeEach(() => {
+            stubConvertEndpointParams = jest.spyOn(GeneratorWriter, 'convertEndpointParams')
+        })
+
+        afterEach(() => {
+            stubConvertEndpointParams.mockRestore()
+        })
+
+        test('when the endpoint has no params', () => {
+            // Declaration
+            stubConvertEndpointParams.mockImplementation(() => [])
+            const depth = 2
+            const node: GeneratorModel.ServiceNode = {
+                id: 'node',
+                name: 'node',
+                post: 'nodePost',
+                nodes: []
+            }
+            // Execution
+            const result = GeneratorWriter.convertStructureNodeEndpoint(service, depth, node, 'post')
+            // Assertion
+            const expected = `        post: () => nodePost(service),`
+            expect(result).toEqual(expected)
+        })
+
+        test('when the endpoint has some params', () => {
+            // Declaration
+            stubConvertEndpointParams.mockImplementation(() => ['param1', 'param2'])
+            const depth = 2
+            const node: GeneratorModel.ServiceNode = {
+                id: 'node',
+                name: 'node',
+                post: 'nodePost',
+                nodes: []
+            }
+            // Execution
+            const result = GeneratorWriter.convertStructureNodeEndpoint(service, depth, node, 'post')
+            // Assertion
+            const expected = `        post: (param1, param2) => nodePost(service, param1, param2),`
+            expect(result).toEqual(expected)
+        })
+    })
+
     // writeIndex //
 
     describe('writeIndex', () => {
 
-        let stubConvertIndex:jest.SpyInstance
+        let stubConvertIndex: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertIndex = jest.spyOn(GeneratorWriter, 'convertIndex')
@@ -674,7 +809,7 @@ describe('generator-writer', () => {
 
     describe('writeGlobalIndex', () => {
 
-        let stubConvertGlobalIndex:jest.SpyInstance
+        let stubConvertGlobalIndex: jest.SpyInstance
 
         beforeEach(() => {
             stubConvertGlobalIndex = jest.spyOn(GeneratorWriter, 'convertGlobalIndex')
@@ -688,7 +823,7 @@ describe('generator-writer', () => {
         test('properly calls subsequent methods', () => {
             // Declaration
             const file = 'file'
-            const services:string[] = []
+            const services: string[] = []
             // Execution
             const result = GeneratorWriter.writeGlobalIndex(file, services)
             // Assertion
