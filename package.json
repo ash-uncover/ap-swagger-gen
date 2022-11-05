@@ -1,6 +1,6 @@
 {
     "name": "@uncover/js-swagger-generator",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "author": "aSH <ash.uncover@gmail.com>",
     "description": "Javascript code generator based on swagger format",
     "license": "ISC",
@@ -27,6 +27,9 @@
         "test": "jest",
         "test-coverage": "jest --collectCoverage",
         "version": "npm run format"
+    },
+    "peerDependencies": {
+        "@uncover/js-utils-fetch": "^0.0.2"
     },
     "devDependencies": {
         "@types/jest": "latest",
