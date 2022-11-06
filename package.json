@@ -1,6 +1,6 @@
 {
     "name": "@uncover/js-swagger-generator",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "author": "aSH <ash.uncover@gmail.com>",
     "description": "Javascript code generator based on swagger format",
     "license": "ISC",

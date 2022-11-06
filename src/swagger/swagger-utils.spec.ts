@@ -160,6 +160,25 @@ describe('swagger-utils', () => {
             expect(result).toEqual(expected)
         })
 
+        test('throws when the schema is object without properties', () => {
+            // Declaration
+            const key:string = 'schema'
+            const schema:SwaggerModel.SwaggerSchema = {
+                type: 'object',
+                title: 'title',
+            }
+            // Execution
+            const result = SwaggerUtils.buildSchema(key, schema)
+            // Assertion
+            const expected = {
+                name: key,
+                description: schema.title,
+                extends: ['Object', 'Array<any>'],
+                properties: []
+            }
+            expect(result).toEqual(expected)
+        })
+
         test('throws when the schema type not object', () => {
             // Declaration
             const key:string = 'schema'
