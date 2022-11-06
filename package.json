@@ -43,5 +43,8 @@
         "tslint": "latest",
         "tslint-config-prettier": "latest",
         "typescript": "latest"
+    },
+    "dependencies": {
+        "@uncover/js-utils-logger": "^0.1.3"
     }
 }

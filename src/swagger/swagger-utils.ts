@@ -25,6 +25,9 @@ import type {
 
 import * as utils from '../utils/utils.js'
 
+import Logger from '@uncover/js-utils-logger'
+const LOGGER = new Logger('SWAGGER-UTILS')
+
 // --------------------------------------------
 // Schemas
 // --------------------------------------------
@@ -55,7 +58,7 @@ export const buildSchema = (key:string, schema:SwaggerSchema):Model => {
                 model.properties = allOf.properties
             } else {
                 // This is not normal that means the interface is not defined
-                console.warn(`### Warning: type ${key} is of type 'object' but does not define properties`)
+                LOGGER.warn(`### Warning: type ${key} is of type 'object' but does not define properties`)
                 model.extends = ['Object', 'Array<any>']
             }
             break
