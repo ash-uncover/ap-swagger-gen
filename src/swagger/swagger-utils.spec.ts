@@ -173,7 +173,8 @@ describe('swagger-utils', () => {
             const expected = {
                 name: key,
                 description: schema.title,
-                extends: ['Object', 'Array<any>']
+                extends: ['Object', 'Array<any>'],
+                properties: []
             }
             expect(result).toEqual(expected)
         })
