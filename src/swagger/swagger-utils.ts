@@ -53,6 +53,10 @@ export const buildSchema = (key:string, schema:SwaggerSchema):Model => {
                 const allOf = buildSchemaAllOf(schema.allOf, schema.required)
                 model.extends = allOf.ext
                 model.properties = allOf.properties
+            } else {
+                // This is not normal that means the interface is not defined
+                console.warn(`### Warning: type ${key} is of type 'object' but does not define properties`)
+                model.extends = ['Object', 'Array<any>']
             }
             break
         }
@@ -114,9 +118,6 @@ export const getPropertyType = (property:any):string => {
             }
             case 'integer': {
                 return 'Number'
-            }
-            case 'JsonNode': {
-                return 'any'
             }
             case 'array': {
                 if (property.items) {

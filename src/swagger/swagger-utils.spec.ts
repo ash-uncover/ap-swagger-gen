@@ -160,6 +160,24 @@ describe('swagger-utils', () => {
             expect(result).toEqual(expected)
         })
 
+        test('throws when the schema is object without properties', () => {
+            // Declaration
+            const key:string = 'schema'
+            const schema:SwaggerModel.SwaggerSchema = {
+                type: 'object',
+                title: 'title',
+            }
+            // Execution
+            const result = SwaggerUtils.buildSchema(key, schema)
+            // Assertion
+            const expected = {
+                name: key,
+                description: schema.title,
+                extends: ['Object', 'Array<any>']
+            }
+            expect(result).toEqual(expected)
+        })
+
         test('throws when the schema type not object', () => {
             // Declaration
             const key:string = 'schema'
@@ -412,18 +430,6 @@ describe('swagger-utils', () => {
             const result = SwaggerUtils.getPropertyType(property)
             // Assertion
             const expected = 'Number'
-            expect(result).toBe(expected)
-        })
-
-        test('return Number when property is an JsonNode', () => {
-            // Declaration
-            const property:any = {
-                type: 'JsonNode',
-            }
-            // Execution
-            const result = SwaggerUtils.getPropertyType(property)
-            // Assertion
-            const expected = 'any'
             expect(result).toBe(expected)
         })
 
