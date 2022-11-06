@@ -115,6 +115,9 @@ export const getPropertyType = (property:any):string => {
             case 'integer': {
                 return 'Number'
             }
+            case 'JsonNode': {
+                return 'any'
+            }
             case 'array': {
                 if (property.items) {
                     return `Array<${getPropertyType(property.items)}>`
