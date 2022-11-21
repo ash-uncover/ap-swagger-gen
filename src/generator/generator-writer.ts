@@ -78,17 +78,27 @@ export const convertEndpoint = (service: Service, endpoint: ServiceEndpoint): st
     const result: string[] = []
     const params: string[] = convertEndpointParams(endpoint, true)
 
-    result.push(`export const ${endpoint.name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
+    const {
+        method,
+        name,
+        payloadType,
+        queryParams,
+    } = endpoint
+
+    result.push(`export const ${name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
     let url = endpoint.url.split('{').join('${')
-    if (endpoint.queryParams?.length) {
-        url += '?'
-        url += endpoint.queryParams.map(param => `${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}`).join('&')
+    result.push(`${indent(1)}${queryParams?.length ? 'let' : 'const'} url = \`${url}${queryParams?.length ? '?' : ''}\``)
+    if (queryParams) {
+        queryParams.forEach((param, indexParam) => {
+            result.push(`${indent(1)}if (typeof query['${param.name}'] !== 'undefined') {`)
+            result.push(`${indent(2)}url += \`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}${indexParam < queryParams.length - 1 ? '&' : ''}\``)
+            result.push(`${indent(1)}}`)
+        })
     }
-    result.push(`${indent(1)}const url = \`${url}\``)
     result.push(`${indent(1)}const options = {`)
-    result.push(`${indent(2)}method: '${endpoint.method}',`)
-    if (endpoint.payloadType) {
-        if (endpoint.payloadType === 'any') {
+    result.push(`${indent(2)}method: '${method}',`)
+    if (payloadType) {
+        if (payloadType === 'any') {
             result.push(`${indent(2)}body: payload,`)
         } else {
             result.push(`${indent(2)}body: JSON.stringify(payload),`)

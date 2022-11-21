@@ -412,7 +412,13 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 `export const endpointName = async (service:any, query:{'id':string, 'value'?:boolean}, payload:any) => {`,
-                '    const url = `endpointUrl?id=${encodeURIComponent(String(query[\'id\']))}&value=${encodeURIComponent(String(query[\'value\']))}`',
+                '    let url = `endpointUrl?`',
+                `    if (typeof query['id'] !== 'undefined') {`,
+                '        url += `id=${encodeURIComponent(String(query[\'id\']))}&`',
+                '    }',
+                `    if (typeof query['value'] !== 'undefined') {`,
+                '        url += `value=${encodeURIComponent(String(query[\'value\']))}`',
+                '    }',
                 '    const options = {',
                 `        method: 'POST',`,
                 `        body: payload,`,
