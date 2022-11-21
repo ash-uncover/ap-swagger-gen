@@ -413,10 +413,12 @@ describe('generator-writer', () => {
             const expected = [
                 `export const endpointName = async (service:any, query:{'id':string, 'value'?:boolean}, payload:any) => {`,
                 '    let url = `endpointUrl?`',
-                '    url += `id=${encodeURIComponent(String(query[\'id\']))}&`',
+                '    const urlQueryParams = []',
+                '    urlQueryParams.push(`id=${encodeURIComponent(String(query[\'id\']))}`)',
                 `    if (typeof query['value'] !== 'undefined') {`,
-                '        url += `value=${encodeURIComponent(String(query[\'value\']))}`',
+                '        urlQueryParams.push(`value=${encodeURIComponent(String(query[\'value\']))}`)',
                 '    }',
+                `    url += urlQueryParams.join('&')`,
                 '    const options = {',
                 `        method: 'POST',`,
                 `        body: payload,`,
@@ -444,6 +446,7 @@ describe('generator-writer', () => {
                 url: 'endpointUrl',
                 method: 'PUT',
                 payloadType: 'type',
+                queryParams: []
             }
             // Execution
             const result = GeneratorWriter.convertEndpoint(service, endpoint)

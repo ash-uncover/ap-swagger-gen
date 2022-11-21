@@ -88,17 +88,18 @@ export const convertEndpoint = (service: Service, endpoint: ServiceEndpoint): st
     result.push(`export const ${name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
     let url = endpoint.url.split('{').join('${')
     result.push(`${indent(1)}${queryParams?.length ? 'let' : 'const'} url = \`${url}${queryParams?.length ? '?' : ''}\``)
-    if (queryParams) {
-        queryParams.forEach((param, indexParam) => {
-            const afterChar = indexParam < queryParams.length - 1 ? '&' : ''
+    if (queryParams && queryParams.length) {
+        result.push(`${indent(1)}const urlQueryParams = []`)
+        queryParams.forEach((param) => {
             if (param.required) {
-                result.push(`${indent(1)}url += \`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}${afterChar}\``)
+                result.push(`${indent(1)}urlQueryParams.push(\`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}\`)`)
             } else {
                 result.push(`${indent(1)}if (typeof query['${param.name}'] !== 'undefined') {`)
-                result.push(`${indent(2)}url += \`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}${afterChar}\``)
+                result.push(`${indent(2)}urlQueryParams.push(\`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}\`)`)
                 result.push(`${indent(1)}}`)
             }
         })
+        result.push(`${indent(1)}url += urlQueryParams.join('&')`)
     }
     result.push(`${indent(1)}const options = {`)
     result.push(`${indent(2)}method: '${method}',`)
