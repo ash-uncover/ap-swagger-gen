@@ -86,7 +86,7 @@ export const convertEndpoint = (service: Service, endpoint: ServiceEndpoint): st
     } = endpoint
 
     result.push(`export const ${name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
-    let url = endpoint.url.split('{').join('${')
+    const url = endpoint.url.split('{').join('${')
     result.push(`${indent(1)}${queryParams?.length ? 'let' : 'const'} url = \`${url}${queryParams?.length ? '?' : ''}\``)
     if (queryParams && queryParams.length) {
         result.push(`${indent(1)}const urlQueryParams = []`)
