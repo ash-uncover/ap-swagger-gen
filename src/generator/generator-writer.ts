@@ -78,17 +78,33 @@ export const convertEndpoint = (service: Service, endpoint: ServiceEndpoint): st
     const result: string[] = []
     const params: string[] = convertEndpointParams(endpoint, true)
 
-    result.push(`export const ${endpoint.name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
-    let url = endpoint.url.split('{').join('${')
-    if (endpoint.queryParams?.length) {
-        url += '?'
-        url += endpoint.queryParams.map(param => `${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}`).join('&')
+    const {
+        method,
+        name,
+        payloadType,
+        queryParams,
+    } = endpoint
+
+    result.push(`export const ${name} = async (service:any${params.length ? ', ' : ''}${params.join(', ')}) => {`)
+    const url = endpoint.url.split('{').join('${')
+    result.push(`${indent(1)}${queryParams?.length ? 'let' : 'const'} url = \`${url}${queryParams?.length ? '?' : ''}\``)
+    if (queryParams && queryParams.length) {
+        result.push(`${indent(1)}const urlQueryParams = []`)
+        queryParams.forEach((param) => {
+            if (param.required) {
+                result.push(`${indent(1)}urlQueryParams.push(\`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}\`)`)
+            } else {
+                result.push(`${indent(1)}if (typeof query['${param.name}'] !== 'undefined') {`)
+                result.push(`${indent(2)}urlQueryParams.push(\`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}\`)`)
+                result.push(`${indent(1)}}`)
+            }
+        })
+        result.push(`${indent(1)}url += urlQueryParams.join('&')`)
     }
-    result.push(`${indent(1)}const url = \`${url}\``)
     result.push(`${indent(1)}const options = {`)
-    result.push(`${indent(2)}method: '${endpoint.method}',`)
-    if (endpoint.payloadType) {
-        if (endpoint.payloadType === 'any') {
+    result.push(`${indent(2)}method: '${method}',`)
+    if (payloadType) {
+        if (payloadType === 'any') {
             result.push(`${indent(2)}body: payload,`)
         } else {
             result.push(`${indent(2)}body: JSON.stringify(payload),`)

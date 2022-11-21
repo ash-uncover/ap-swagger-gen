@@ -3,7 +3,7 @@
     "version": "0.0.5",
     "author": "aSH <ash.uncover@gmail.com>",
     "description": "Javascript code generator based on swagger format",
-    "license": "ISC",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/ash-uncover/js-swagger-generator"
