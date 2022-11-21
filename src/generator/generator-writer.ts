@@ -90,9 +90,14 @@ export const convertEndpoint = (service: Service, endpoint: ServiceEndpoint): st
     result.push(`${indent(1)}${queryParams?.length ? 'let' : 'const'} url = \`${url}${queryParams?.length ? '?' : ''}\``)
     if (queryParams) {
         queryParams.forEach((param, indexParam) => {
-            result.push(`${indent(1)}if (typeof query['${param.name}'] !== 'undefined') {`)
-            result.push(`${indent(2)}url += \`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}${indexParam < queryParams.length - 1 ? '&' : ''}\``)
-            result.push(`${indent(1)}}`)
+            const afterChar = indexParam < queryParams.length - 1 ? '&' : ''
+            if (param.required) {
+                result.push(`${indent(1)}url += \`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}${afterChar}\``)
+            } else {
+                result.push(`${indent(1)}if (typeof query['${param.name}'] !== 'undefined') {`)
+                result.push(`${indent(2)}url += \`${encodeURIComponent(param.name)}=\${encodeURIComponent(String(query['${param.name}']))}${afterChar}\``)
+                result.push(`${indent(1)}}`)
+            }
         })
     }
     result.push(`${indent(1)}const options = {`)

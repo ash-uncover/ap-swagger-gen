@@ -413,9 +413,7 @@ describe('generator-writer', () => {
             const expected = [
                 `export const endpointName = async (service:any, query:{'id':string, 'value'?:boolean}, payload:any) => {`,
                 '    let url = `endpointUrl?`',
-                `    if (typeof query['id'] !== 'undefined') {`,
-                '        url += `id=${encodeURIComponent(String(query[\'id\']))}&`',
-                '    }',
+                '    url += `id=${encodeURIComponent(String(query[\'id\']))}&`',
                 `    if (typeof query['value'] !== 'undefined') {`,
                 '        url += `value=${encodeURIComponent(String(query[\'value\']))}`',
                 '    }',
