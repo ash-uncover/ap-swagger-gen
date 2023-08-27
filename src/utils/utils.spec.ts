@@ -51,7 +51,7 @@ describe('utils', () => {
             // Execution
             const result = utils.indent(depth)
             // Assertion
-            expect(result).toEqual('        ')
+            expect(result).toEqual('    ')
         })
 
         test('when depth is empty', () => {

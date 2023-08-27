@@ -5,6 +5,7 @@
 process.title = 'js-swagger-generator'
 
 import * as fs from 'fs'
+import * as yaml from 'js-yaml'
 
 import {
     GeneratorWriter,
@@ -124,6 +125,14 @@ if (filesStats.isDirectory()) {
     listPromise = Promise.resolve(actualArgs.files)
 }
 
+const readFile = (file) => {
+    const rawdata = fs.readFileSync(file, 'utf8')
+    try {
+        return JSON.parse(rawdata)
+    } catch (error) {
+        return yaml.load(rawdata);
+    }
+}
 
 listPromise.then((files) => {
     console.log(`> output directory: '${actualArgs.output}'`)
@@ -132,8 +141,7 @@ listPromise.then((files) => {
 
     let services = []
     files.forEach(file => {
-        const rawdata = fs.readFileSync(file, 'utf8')
-        const docs = JSON.parse(rawdata)
+        const docs = readFile(file)
         const url = docs.servers[0].url.replace('http://', '').replace('https://', '')
         const urlParts = url.split('/');
         const server = urlParts[0]
