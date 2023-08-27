@@ -1,6 +1,6 @@
 /* tslint:disable:no-console */
 
-const INDENTATION = '    '
+const INDENTATION = '  '
 
 const DEBUG = false
 

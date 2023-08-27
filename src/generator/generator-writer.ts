@@ -31,7 +31,14 @@ export const convertModel = (model: Model): string => {
 }
 
 export const convertModelProperty = (property: ModelProperty): string => {
-    return `${indent(1)}'${property.name}'${property.required ? '' : '?'}: ${property.type}`
+    let propertyType = property.type
+    switch (property.type) {
+        case 'String': {
+            propertyType = 'string'
+            break
+        }
+    }
+    return `${indent(1)}'${property.name}'${property.required ? '' : '?'}: ${propertyType}`
 }
 
 
