@@ -211,8 +211,8 @@ export const convertIndex = (name: string): string => {
         `import * as Model from './${name}.model'`,
         '',
         `export default {`,
-        '    Model,',
-        '    Service,',
+        '  Model,',
+        '  Service,',
         '}',
         '',
     ]

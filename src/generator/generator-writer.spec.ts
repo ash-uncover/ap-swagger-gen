@@ -129,12 +129,12 @@ describe('generator-writer', () => {
             const property: GeneratorModel.ModelProperty = {
                 name: 'property',
                 required: true,
-                type: 'type'
+                type: 'String'
             }
             // Execution
             const result = GeneratorWriter.convertModelProperty(property)
             // Assertion
-            const expected = "    'property': type"
+            const expected = "  'property': string"
             expect(result).toEqual(expected)
         })
 
@@ -143,12 +143,12 @@ describe('generator-writer', () => {
             const property: GeneratorModel.ModelProperty = {
                 name: 'property',
                 required: false,
-                type: 'type'
+                type: 'string'
             }
             // Execution
             const result = GeneratorWriter.convertModelProperty(property)
             // Assertion
-            const expected = "    'property'?: type"
+            const expected = "  'property'?: string"
             expect(result).toEqual(expected)
         })
     })
@@ -213,8 +213,8 @@ describe('generator-writer', () => {
             const expected = [
                 `import { Service } from '@uncover/js-utils-fetch'`,
                 'import {',
-                '    modelName1,',
-                '    modelName2,',
+                '  modelName1,',
+                '  modelName2,',
                 `} from './name.model'`,
                 ''
             ].join('\n')
@@ -339,13 +339,13 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 'export const endpointName = async (service:any) => {',
-                '    const url = `endpointUrl`',
-                '    const options = {',
-                `        method: 'GET',`,
-                '    }',
-                '    const response = await service.fetch(url, options)',
-                '    const responseData = await response.json()',
-                '    return responseData',
+                '  const url = `endpointUrl`',
+                '  const options = {',
+                `    method: 'GET',`,
+                '  }',
+                '  const response = await service.fetch(url, options)',
+                '  const responseData = await response.json()',
+                '  return responseData',
                 `}`,
                 ''
             ].join('\n')
@@ -375,13 +375,13 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 'export const endpointName = async (service:any, id:string, value:boolean) => {',
-                '    const url = `endpointUrl`',
-                '    const options = {',
-                `        method: 'DELETE',`,
-                '    }',
-                '    const response = await service.fetch(url, options)',
-                '    const responseData = await response.json()',
-                '    return responseData',
+                '  const url = `endpointUrl`',
+                '  const options = {',
+                `    method: 'DELETE',`,
+                '  }',
+                '  const response = await service.fetch(url, options)',
+                '  const responseData = await response.json()',
+                '  return responseData',
                 `}`,
                 ''
             ].join('\n')
@@ -412,20 +412,20 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 `export const endpointName = async (service:any, query:{'id':string, 'value'?:boolean}, payload:any) => {`,
-                '    let url = `endpointUrl?`',
-                '    const urlQueryParams = []',
-                '    urlQueryParams.push(`id=${encodeURIComponent(String(query[\'id\']))}`)',
-                `    if (typeof query['value'] !== 'undefined') {`,
-                '        urlQueryParams.push(`value=${encodeURIComponent(String(query[\'value\']))}`)',
-                '    }',
-                `    url += urlQueryParams.join('&')`,
-                '    const options = {',
-                `        method: 'POST',`,
-                `        body: payload,`,
-                '    }',
-                '    const response = await service.fetch(url, options)',
-                '    const responseData = await response.json()',
-                '    return responseData',
+                '  let url = `endpointUrl?`',
+                '  const urlQueryParams = []',
+                '  urlQueryParams.push(`id=${encodeURIComponent(String(query[\'id\']))}`)',
+                `  if (typeof query['value'] !== 'undefined') {`,
+                '    urlQueryParams.push(`value=${encodeURIComponent(String(query[\'value\']))}`)',
+                '  }',
+                `  url += urlQueryParams.join('&')`,
+                '  const options = {',
+                `    method: 'POST',`,
+                `    body: payload,`,
+                '  }',
+                '  const response = await service.fetch(url, options)',
+                '  const responseData = await response.json()',
+                '  return responseData',
                 `}`,
                 ''
             ].join('\n')
@@ -453,14 +453,14 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 'export const endpointName = async (service:any, payload:type) => {',
-                '    const url = `endpointUrl`',
-                '    const options = {',
-                `        method: 'PUT',`,
-                `        body: JSON.stringify(payload),`,
-                '    }',
-                '    const response = await service.fetch(url, options)',
-                '    const responseData = await response.json()',
-                '    return responseData',
+                '  const url = `endpointUrl`',
+                '  const options = {',
+                `    method: 'PUT',`,
+                `    body: JSON.stringify(payload),`,
+                '  }',
+                '  const response = await service.fetch(url, options)',
+                '  const responseData = await response.json()',
+                '  return responseData',
                 `}`,
                 ''
             ].join('\n')
@@ -566,10 +566,10 @@ describe('generator-writer', () => {
             // Assertion
             const expected = [
                 `const ServiceNameService = (config: any) => {`,
-                `    const service = new Service(config, 'serviceUrlBase', {`,
+                `  const service = new Service(config, 'serviceUrlBase', {`,
                 'structureNodes',
-                '    })',
-                '    return service',
+                '  })',
+                '  return service',
                 '}',
                 'export default ServiceNameService',
                 '',
@@ -646,8 +646,8 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertStructureNode(service, depth, node)
             // Assertion
             const expected = [
-                `        'node': {`,
-                '        },',
+                `    'node': {`,
+                '    },',
             ].join('\n')
             expect(result).toEqual(expected)
         })
@@ -668,12 +668,12 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertStructureNode(service, depth, node)
             // Assertion
             const expected = [
-                `        'node': {`,
-                `            post: () => nodePost(service),`,
-                `            get: () => nodeGet(service),`,
-                `            put: () => nodePut(service),`,
-                `            delete: () => nodeDelete(service),`,
-                '        },',
+                `    'node': {`,
+                `      post: () => nodePost(service),`,
+                `      get: () => nodeGet(service),`,
+                `      put: () => nodePut(service),`,
+                `      delete: () => nodeDelete(service),`,
+                '    },',
             ].join('\n')
             expect(result).toEqual(expected)
         })
@@ -694,10 +694,10 @@ describe('generator-writer', () => {
             const result = GeneratorWriter.convertStructureNode(service, depth, node)
             // Assertion
             const expected = [
-                `        'parent': {`,
-                `            'child': {`,
-                `            },`,
-                '        },',
+                `    'parent': {`,
+                `      'child': {`,
+                `      },`,
+                '    },',
             ].join('\n')
             expect(result).toEqual(expected)
         })
@@ -739,7 +739,7 @@ describe('generator-writer', () => {
             // Execution
             const result = GeneratorWriter.convertStructureNodeEndpoint(service, depth, node, 'post')
             // Assertion
-            const expected = `        post: () => nodePost(service),`
+            const expected = `    post: () => nodePost(service),`
             expect(result).toEqual(expected)
         })
 
@@ -756,7 +756,7 @@ describe('generator-writer', () => {
             // Execution
             const result = GeneratorWriter.convertStructureNodeEndpoint(service, depth, node, 'post')
             // Assertion
-            const expected = `        post: (param1, param2) => nodePost(service, param1, param2),`
+            const expected = `    post: (param1, param2) => nodePost(service, param1, param2),`
             expect(result).toEqual(expected)
         })
     })
@@ -803,8 +803,8 @@ describe('generator-writer', () => {
                 `import * as Model from './name.model'`,
                 '',
                 `export default {`,
-                '    Model,',
-                '    Service,',
+                '  Model,',
+                '  Service,',
                 '}',
                 '',
             ].join('\n')
@@ -860,8 +860,8 @@ describe('generator-writer', () => {
                 `export const Service2Model = Service2.Model`,
                 '',
                 `export default {`,
-                '    Service1,',
-                '    Service2,',
+                '  Service1,',
+                '  Service2,',
                 '}',
                 '',
             ].join('\n')
