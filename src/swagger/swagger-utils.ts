@@ -1,17 +1,13 @@
 import type {
-    SwaggerSchemas,
-    SwaggerSchema,
-    SwaggerPaths,
-    SwaggerPath,
-    SwaggerMethodPost,
-    SwaggerMethodGet,
-    SwaggerMethodPut,
-    SwaggerMethodDelete,
-    SwaggerMethodParameter,
-    SwaggerSchemaProperty,
-    SwaggerSchemaProperties,
-    SwaggerSchemaAllOf,
-    SwaggerMethod
+    OpenAPIOperation,
+    OpenAPIParameter,
+    OpenAPIPathItem,
+    OpenAPIPaths,
+    OpenAPIReference,
+    OpenAPISchema,
+    JsonSchemaAllOf,
+    JsonSchemaProperties,
+    JsonSchemaProperty,
 } from './swagger-model.js'
 
 import type {
@@ -29,7 +25,7 @@ import * as utils from '../utils/utils.js'
 // Schemas
 // --------------------------------------------
 
-export const buildSchemas = (schemas:SwaggerSchemas):Model[] => {
+export const buildSchemas = (schemas:{ [key: string]: OpenAPISchema }):Model[] => {
     return Object.keys(schemas)
         .sort()
         .map((key:string) => {
@@ -38,7 +34,7 @@ export const buildSchemas = (schemas:SwaggerSchemas):Model[] => {
         })
 }
 
-export const buildSchema = (key:string, schema:SwaggerSchema):Model => {
+export const buildSchema = (key:string, schema:OpenAPISchema):Model => {
     utils.log(`buildSchema ${key}`)
     const model:Model = {
         name: key,
@@ -67,7 +63,7 @@ export const buildSchema = (key:string, schema:SwaggerSchema):Model => {
     return model
 }
 
-export const buildSchemaProperties = (properties:SwaggerSchemaProperties, required:string[]|undefined):ModelProperty[] => {
+export const buildSchemaProperties = (properties:JsonSchemaProperties, required:string[]|undefined):ModelProperty[] => {
     return Object.keys(properties)
         .sort()
         .map((key:string) => {
@@ -77,8 +73,8 @@ export const buildSchemaProperties = (properties:SwaggerSchemaProperties, requir
         })
 }
 
-export const buildSchemaAllOf = (allOf:SwaggerSchemaAllOf[], required:string[]|undefined):{ext?:string[], properties?:ModelProperty[]} => {
-    const result = allOf.reduce((acc:{ext?:string[], properties?:ModelProperty[]}, item:SwaggerSchemaAllOf) => {
+export const buildSchemaAllOf = (allOf:JsonSchemaAllOf[], required:string[]|undefined):{ext?:string[], properties?:ModelProperty[]} => {
+    const result = allOf.reduce((acc:{ext?:string[], properties?:ModelProperty[]}, item:JsonSchemaAllOf) => {
         const ref = item.$ref
         const properties = item.properties
         if (ref) {
@@ -95,7 +91,7 @@ export const buildSchemaAllOf = (allOf:SwaggerSchemaAllOf[], required:string[]|u
     return result
 }
 
-export const buildObjectProperty = (key:string, property:SwaggerSchemaProperty, required:boolean):ModelProperty => {
+export const buildObjectProperty = (key:string, property:JsonSchemaProperty, required:boolean):ModelProperty => {
     utils.log(`  - buildProperty ${key}`)
     const result:ModelProperty = {
         name: key,
@@ -173,7 +169,7 @@ export const addNode = (nodes:ServiceNode[], urlParts:string[]):ServiceNode => {
     return addNode(node.nodes, remainingParts)
 }
 
-export const buildPaths = (name:string, urlBase:string, paths:SwaggerPaths):Service => {
+export const buildPaths = (name:string, urlBase:string, paths:OpenAPIPaths):Service => {
     const service:Service = {
         name,
         urlBase,
@@ -184,7 +180,7 @@ export const buildPaths = (name:string, urlBase:string, paths:SwaggerPaths):Serv
     Object.keys(paths)
         .sort()
         .forEach((url:string) => {
-            const path:SwaggerPath = paths[url]
+            const path:OpenAPIPathItem = paths[url]
             // Create structure
             const urlParts = url.split('/').filter(part => !!part)
             const node = addNode(service.structure, urlParts)
@@ -210,33 +206,33 @@ export const buildPaths = (name:string, urlBase:string, paths:SwaggerPaths):Serv
     return service
 }
 
-export const buildPathPost = (url:string, post:SwaggerMethodPost):ServiceEndpoint => {
+export const buildPathPost = (url:string, post:OpenAPIOperation):ServiceEndpoint => {
     const result = buildPathBase(url, post)
     result.method = 'POST'
     result.payloadType = getPayloadType(post.requestBody)
     return result
 }
 
-export const buildPathGet = (url:string, get:SwaggerMethodGet):ServiceEndpoint => {
+export const buildPathGet = (url:string, get:OpenAPIOperation):ServiceEndpoint => {
     const result = buildPathBase(url, get)
     result.method = 'GET'
     return result
 }
 
-export const buildPathPut = (url:string, put:SwaggerMethodPut):ServiceEndpoint => {
+export const buildPathPut = (url:string, put:OpenAPIOperation):ServiceEndpoint => {
     const result = buildPathBase(url, put)
     result.method = 'PUT'
     result.payloadType = getPayloadType(put.requestBody)
     return result
 }
 
-export const buildPathDelete = (url:string, del:SwaggerMethodDelete):ServiceEndpoint => {
+export const buildPathDelete = (url:string, del:OpenAPIOperation):ServiceEndpoint => {
     const result = buildPathBase(url, del)
     result.method = 'DELETE'
     return result
 }
 
-export const buildPathBase = (url:string, method:SwaggerMethod):ServiceEndpoint => {
+export const buildPathBase = (url:string, method:OpenAPIOperation):ServiceEndpoint => {
     const urlParams = getUrlParameters(method.parameters)
     const queryParams = getQueryParameters(method.parameters)
     const name = checkOperationId(method.operationId)
@@ -256,29 +252,33 @@ export const checkOperationId = (operationId:string):string => {
     return operationId
 }
 
-export const getUrlParameters = (parameters:SwaggerMethodParameter[]|undefined):ServiceEndpointParameter[]|undefined => {
+export const getUrlParameters = (parameters:(OpenAPIParameter | OpenAPIReference)[] | undefined):ServiceEndpointParameter[]|undefined => {
     const params:ServiceEndpointParameter[]|undefined = undefined
     if (parameters) {
         return parameters
+            // @ts-ignore
             .filter(param => param.in === 'path')
-            .map(param => ({
+            // @ts-ignore
+            .map((param: OpenAPIParameter) => ({
                 name: checkOperationId(param.name),
-                required: param.required,
+                required: Boolean(param.required),
                 type: getPropertyType(param.schema),
             }))
     }
     return params
 }
 
-export const getQueryParameters = (parameters:SwaggerMethodParameter[]|undefined):ServiceEndpointParameter[]|undefined => {
+export const getQueryParameters = (parameters:(OpenAPIParameter | OpenAPIReference)[] | undefined):ServiceEndpointParameter[]|undefined => {
     const params:ServiceEndpointParameter[]|undefined = undefined
     if (parameters) {
         return parameters
+            // @ts-ignore
             .filter(param => param.in === 'query')
-            .map((param):ServiceEndpointParameter => {
+            // @ts-ignore
+            .map((param: OpenAPIParameter):ServiceEndpointParameter => {
                 return {
                     name: param.name,
-                    required: param.required,
+                    required: Boolean(param.required),
                     type: getPropertyType(param.schema),
                 }
             })
