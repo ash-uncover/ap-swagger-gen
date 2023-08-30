@@ -134,6 +134,11 @@ const readFile = (file) => {
     }
 }
 
+const buildServiceName = (file) => {
+    let serviceName = file.split('/')[file.split('/').length - 1].split('.')[0]
+    serviceName = serviceName.split('-').map(s => `${s.pop().toUpperCase()}${s}`).join('')
+}
+
 listPromise.then((files) => {
     console.log(`> output directory: '${actualArgs.output}'`)
 
@@ -142,11 +147,11 @@ listPromise.then((files) => {
     let services = []
     files.forEach(file => {
         const docs = readFile(file)
-        const url = docs.servers[0].url.replace('http://', '').replace('https://', '')
-        const urlParts = url.split('/');
-        const server = urlParts[0]
-        const service = urlParts[urlParts.length - 1]
-        const urlBase = url.replace(server, '')
+        const url = new URL(docs.servers[0].url)
+        const urlBase = url.pathname
+        //const urlParts = url.split('/');
+        //const server = urlParts[0]
+        const service = file.split('/')[file.split('/').length - 1].split('.')[0]
         services.push(service)
 
         console.log(`  > building service: '${service}'`)

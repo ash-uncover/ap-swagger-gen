@@ -1,5 +1,5 @@
 import * as SwaggerUtils from './swagger-utils'
-import * as SwaggerModel from './swagger-model'
+import * as OpenAPIModels from './swagger-model'
 import * as GeneratorModel from '../generator/generator-models'
 
 describe('swagger-utils', () => {
@@ -22,7 +22,7 @@ describe('swagger-utils', () => {
 
         test('return empty array when no schemas', () => {
             // Declaration
-            const schemas:SwaggerModel.SwaggerSchemas = {}
+            const schemas:{ [key: string]: OpenAPIModels.OpenAPISchema } = {}
             // Execution
             const result = SwaggerUtils.buildSchemas(schemas)
             // Assertion
@@ -32,7 +32,7 @@ describe('swagger-utils', () => {
         test('build one schema', () => {
             // Declaration
             stubBuildSchema.mockImplementation((key, schema) => key)
-            const schemas:SwaggerModel.SwaggerSchemas = {
+            const schemas:{ [key: string]: OpenAPIModels.OpenAPISchema } = {
                 schema: {
                     type: 'object',
                     title: 'titleObj',
@@ -51,7 +51,7 @@ describe('swagger-utils', () => {
         test('reorder and build several schemas', () => {
             // Declaration
             stubBuildSchema.mockImplementation((key, schema) => key)
-            const schemas:SwaggerModel.SwaggerSchemas = {
+            const schemas:{ [key: string]: OpenAPIModels.OpenAPISchema } = {
                 schema3: { type: 'object', properties: { prop: {} }  },
                 schema2: { type: 'object', properties: { prop: {} }  },
                 schema1: { type: 'object', properties: { prop: {} }  },
@@ -88,7 +88,7 @@ describe('swagger-utils', () => {
         test('build a model based on title', () => {
             // Declaration
             const key:string = 'schema'
-            const schema:SwaggerModel.SwaggerSchema = {
+            const schema:OpenAPIModels.OpenAPISchema = {
                 type: 'object',
                 title: 'title',
                 properties: {},
@@ -107,7 +107,7 @@ describe('swagger-utils', () => {
         test('build a model based on description when no title', () => {
             // Declaration
             const key:string = 'schema'
-            const schema:SwaggerModel.SwaggerSchema = {
+            const schema:OpenAPIModels.OpenAPISchema = {
                 type: 'object',
                 description: 'description',
                 properties: {},
@@ -126,7 +126,7 @@ describe('swagger-utils', () => {
         test('build a model based on key when no description & no title', () => {
             // Declaration
             const key:string = 'schema'
-            const schema:SwaggerModel.SwaggerSchema = {
+            const schema:OpenAPIModels.OpenAPISchema = {
                 type: 'object',
                 properties: {},
             }
@@ -144,7 +144,7 @@ describe('swagger-utils', () => {
         test('when schema is a allOf', () => {
             // Declaration
             const key:string = 'schema'
-            const schema:SwaggerModel.SwaggerSchema = {
+            const schema:OpenAPIModels.OpenAPISchema = {
                 type: 'object',
                 allOf: [],
             }
@@ -163,7 +163,7 @@ describe('swagger-utils', () => {
         test('throws when the schema is object without properties', () => {
             // Declaration
             const key:string = 'schema'
-            const schema:SwaggerModel.SwaggerSchema = {
+            const schema:OpenAPIModels.OpenAPISchema = {
                 type: 'object',
                 title: 'title',
             }
@@ -182,7 +182,7 @@ describe('swagger-utils', () => {
         test('throws when the schema type not object', () => {
             // Declaration
             const key:string = 'schema'
-            const schema:SwaggerModel.SwaggerSchema = {
+            const schema:OpenAPIModels.OpenAPISchema = {
                 type: 'string',
                 properties: { prop: {} },
             }
@@ -209,7 +209,7 @@ describe('swagger-utils', () => {
 
         test('return empty array when no properties are defined', () => {
             // Declaration
-            const properties:SwaggerModel.SwaggerSchemaProperties = {}
+            const properties:OpenAPIModels.JsonSchemaProperties = {}
             const required:undefined = undefined
             // Execution
             const result = SwaggerUtils.buildSchemaProperties(properties, required)
@@ -219,7 +219,7 @@ describe('swagger-utils', () => {
 
         test('build one property', () => {
             // Declaration
-            const properties:SwaggerModel.SwaggerSchemaProperties = {
+            const properties:OpenAPIModels.JsonSchemaProperties = {
                 prop1: {},
             }
             const required:string[] = ['prop1']
@@ -231,7 +231,7 @@ describe('swagger-utils', () => {
 
         test('reorder and build several properties', () => {
             // Declaration
-            const properties:SwaggerModel.SwaggerSchemaProperties = {
+            const properties:OpenAPIModels.JsonSchemaProperties = {
                 prop3: {},
                 prop2: {},
                 prop1: {},
@@ -261,7 +261,7 @@ describe('swagger-utils', () => {
 
         test('throw an error when invalid entry', () => {
             // Declaration
-            const allOf:SwaggerModel.SwaggerSchemaAllOf[] = [{}]
+            const allOf:OpenAPIModels.JsonSchemaAllOf[] = [{}]
             const required:undefined = undefined
             // Execution
             // Assertion
@@ -270,7 +270,7 @@ describe('swagger-utils', () => {
 
         test('return empty object when no entries', () => {
             // Declaration
-            const allOf:SwaggerModel.SwaggerSchemaAllOf[] = []
+            const allOf:OpenAPIModels.JsonSchemaAllOf[] = []
             const required:undefined = undefined
             // Execution
             const result = SwaggerUtils.buildSchemaAllOf(allOf, required)
@@ -281,7 +281,7 @@ describe('swagger-utils', () => {
 
         test('return correct object when ref entry', () => {
             // Declaration
-            const allOf:SwaggerModel.SwaggerSchemaAllOf[] = [
+            const allOf:OpenAPIModels.JsonSchemaAllOf[] = [
                 { $ref: '#/components/schemas/ref1' },
                 { $ref: '#/components/schemas/ref2' },
             ]
@@ -297,7 +297,7 @@ describe('swagger-utils', () => {
 
         test('return correct object when properties entry', () => {
             // Declaration
-            const allOf:SwaggerModel.SwaggerSchemaAllOf[] = [
+            const allOf:OpenAPIModels.JsonSchemaAllOf[] = [
                 { properties: {} }
             ]
             const required:undefined = undefined
@@ -329,7 +329,7 @@ describe('swagger-utils', () => {
         test('returns a required property when property is tagged required', () => {
             // Declaration
             const key:string = 'property'
-            const property:SwaggerModel.SwaggerSchemaProperty = { type: 'type' }
+            const property:OpenAPIModels.JsonSchemaProperty = { type: 'type' }
             const required:boolean = true
             // Execution
             const result = SwaggerUtils.buildObjectProperty(key, property, required)
@@ -345,7 +345,7 @@ describe('swagger-utils', () => {
         test('returns an optionnal property when property is not tagged required', () => {
             // Declaration
             const key:string = 'property'
-            const property:SwaggerModel.SwaggerSchemaProperty = { type: 'type' }
+            const property:OpenAPIModels.JsonSchemaProperty = { type: 'type' }
             const required:boolean = false
             // Execution
             const result = SwaggerUtils.buildObjectProperty(key, property, required)
@@ -361,7 +361,7 @@ describe('swagger-utils', () => {
         test('returns an optionnal property when no property are required', () => {
             // Declaration
             const key:string = 'property'
-            const property:SwaggerModel.SwaggerSchemaProperty = { type: 'type' }
+            const property:OpenAPIModels.JsonSchemaProperty = { type: 'type' }
             const required:boolean = false
             // Execution
             const result = SwaggerUtils.buildObjectProperty(key, property, required)
@@ -1008,7 +1008,7 @@ describe('swagger-utils', () => {
 
         test('returns an empty array when all parameters are filtered out', () => {
             // Declaration
-            const parameters:SwaggerModel.SwaggerMethodParameter[] = [
+            const parameters:OpenAPIModels.OpenAPIParameter[] = [
                 { description: 'description1', name: 'name1', in: 'query', required: true, schema: { type: 'type1', properties: {} } },
                 { description: 'description2', name: 'name2', in: 'query', required: true, schema: { type: 'type2', properties: {} } },
             ]
@@ -1021,7 +1021,7 @@ describe('swagger-utils', () => {
 
         test('returns an array of parameter', () => {
             // Declaration
-            const parameters:SwaggerModel.SwaggerMethodParameter[] = [
+            const parameters:OpenAPIModels.OpenAPIParameter[] = [
                 { description: 'description', name: 'name', in: 'path', required: true, schema: { type: 'type', properties: {} } },
             ]
             // Execution
@@ -1062,7 +1062,7 @@ describe('swagger-utils', () => {
 
         test('returns an empty array when all parameters are filtered out', () => {
             // Declaration
-            const parameters:SwaggerModel.SwaggerMethodParameter[] = [
+            const parameters:OpenAPIModels.OpenAPIParameter[] = [
                 { description: 'description1', name: 'name1', in: 'path', required: true, schema: { type: 'type1', properties: {} } },
                 { description: 'description2', name: 'name2', in: 'path', required: true, schema: { type: 'type2', properties: {} } },
             ]
@@ -1075,7 +1075,7 @@ describe('swagger-utils', () => {
 
         test('returns an array of parameter', () => {
             // Declaration
-            const parameters:SwaggerModel.SwaggerMethodParameter[] = [
+            const parameters:OpenAPIModels.OpenAPIParameter[] = [
                 { description: 'description1', name: 'name', in: 'query', required: true, schema: { type: 'type', properties: {} } },
             ]
             // Execution

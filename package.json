@@ -1,8 +1,8 @@
 {
     "name": "@uncover/js-swagger-generator",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "author": "aSH <ash.uncover@gmail.com>",
-    "description": "Javascript code generator based on swagger format",
+    "description": "Typescript code generator based on openAPI format",
     "license": "MIT",
     "repository": {
         "type": "git",
