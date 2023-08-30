@@ -296,7 +296,8 @@ export const getPayloadType = (requestBody:any):string|undefined => {
         } else if (requestBody.content['multipart/form-data']) {
             payloadType = 'any'
         } else {
-            throw new Error('Unsupported payload type')
+            console.log(requestBody)
+            throw new Error('Unsupported payload type: ' + JSON.stringify(requestBody))
         }
     }
     return payloadType
