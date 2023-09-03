@@ -8,6 +8,7 @@ import type {
     JsonSchemaAllOf,
     JsonSchemaProperties,
     JsonSchemaProperty,
+    OpenAPIResponses,
 } from './swagger-model.js'
 
 import type {
@@ -25,56 +26,65 @@ import * as utils from '../utils/utils.js'
 // Schemas
 // --------------------------------------------
 
-export const buildSchemas = (schemas:{ [key: string]: OpenAPISchema }):Model[] => {
+export const buildSchemas = (schemas: { [key: string]: OpenAPISchema }): Model[] => {
     return Object.keys(schemas)
         .sort()
-        .map((key:string) => {
+        .map((key: string) => {
             const schema = schemas[key]
             return buildSchema(key, schema)
         })
 }
 
-export const buildSchema = (key:string, schema:OpenAPISchema):Model => {
+export const buildSchema = (key: string, schema: OpenAPISchema): Model => {
     utils.log(`buildSchema ${key}`)
-    const model:Model = {
+    const model: Model = {
         name: key,
         description: schema.title || schema.description || key,
         properties: [],
     }
-    switch (schema.type) {
-        case 'object': {
-            if (schema.properties) {
-                model.properties = buildSchemaProperties(schema.properties, schema.required)
-            } else if (schema.allOf) {
-                const allOf = buildSchemaAllOf(schema.allOf, schema.required)
-                model.extends = allOf.ext
-                model.properties = allOf.properties
-            } else {
-                // This is not normal that means the interface is not defined
-                // console.warn(`### Warning: type ${key} is of type 'object' but does not define properties`)
-                model.extends = ['Object', 'Array<any>']
+    if (schema.allOf) {
+        const allOf = buildSchemaAllOf(schema.allOf, schema.required)
+        model.extends = allOf.ext
+        model.properties = allOf.properties
+
+    } else if (schema.type) {
+        switch (schema.type) {
+            case 'object': {
+                if (schema.properties) {
+                    model.properties = buildSchemaProperties(schema.properties, schema.required)
+                } else if (schema.allOf) {
+                    const allOf = buildSchemaAllOf(schema.allOf, schema.required)
+                    model.extends = allOf.ext
+                    model.properties = allOf.properties
+                } else {
+                    // This is not normal that means the interface is not defined
+                    // console.warn(`### Warning: type ${key} is of type 'object' but does not define properties`)
+                    model.extends = ['Object', 'Array<any>']
+                }
+                break
             }
-            break
+            default: {
+                throw new Error(`Unknown type ${schema.type} for schema ${key}`)
+            }
         }
-        default: {
-            throw new Error(`Unknown type ${schema.type} for schema ${key}`)
-        }
+    } else {
+        throw new Error(`Unknown schema format for schema ${key}`)
     }
     return model
 }
 
-export const buildSchemaProperties = (properties:JsonSchemaProperties, required:string[]|undefined):ModelProperty[] => {
+export const buildSchemaProperties = (properties: JsonSchemaProperties, required: string[] | undefined): ModelProperty[] => {
     return Object.keys(properties)
         .sort()
-        .map((key:string) => {
+        .map((key: string) => {
             const isRequired = Boolean(required && required.includes(key))
             const property = properties[key]
             return buildObjectProperty(key, property, isRequired)
         })
 }
 
-export const buildSchemaAllOf = (allOf:JsonSchemaAllOf[], required:string[]|undefined):{ext?:string[], properties?:ModelProperty[]} => {
-    const result = allOf.reduce((acc:{ext?:string[], properties?:ModelProperty[]}, item:JsonSchemaAllOf) => {
+export const buildSchemaAllOf = (allOf: JsonSchemaAllOf[], required: string[] | undefined): { ext?: string[], properties?: ModelProperty[] } => {
+    const result = allOf.reduce((acc: { ext?: string[], properties?: ModelProperty[] }, item: JsonSchemaAllOf) => {
         const ref = item.$ref
         const properties = item.properties
         if (ref) {
@@ -91,9 +101,9 @@ export const buildSchemaAllOf = (allOf:JsonSchemaAllOf[], required:string[]|unde
     return result
 }
 
-export const buildObjectProperty = (key:string, property:JsonSchemaProperty, required:boolean):ModelProperty => {
+export const buildObjectProperty = (key: string, property: JsonSchemaProperty, required: boolean): ModelProperty => {
     utils.log(`  - buildProperty ${key}`)
-    const result:ModelProperty = {
+    const result: ModelProperty = {
         name: key,
         required,
         type: getPropertyType(property)
@@ -101,13 +111,13 @@ export const buildObjectProperty = (key:string, property:JsonSchemaProperty, req
     return result
 }
 
-export const getPropertyType = (property:any):string => {
+export const getPropertyType = (property: any): string => {
     if (property.type) {
         switch (property.type) {
             case 'string': {
                 if (property.enum) {
                     return property.enum
-                        .map((v:string) => `'${v}'`)
+                        .map((v: string) => `'${v}'`)
                         .join(' | ')
                 }
                 break;
@@ -143,7 +153,7 @@ export const getPropertyType = (property:any):string => {
 // Paths
 // --------------------------------------------
 
-export const addNode = (nodes:ServiceNode[], urlParts:string[]):ServiceNode => {
+export const addNode = (nodes: ServiceNode[], urlParts: string[]): ServiceNode => {
     if (!urlParts.length) {
         throw new Error('Empty url parts')
     }
@@ -169,8 +179,8 @@ export const addNode = (nodes:ServiceNode[], urlParts:string[]):ServiceNode => {
     return addNode(node.nodes, remainingParts)
 }
 
-export const buildPaths = (name:string, urlBase:string, paths:OpenAPIPaths):Service => {
-    const service:Service = {
+export const buildPaths = (name: string, urlBase: string, paths: OpenAPIPaths): Service => {
+    const service: Service = {
         name,
         urlBase,
         endpoints: [],
@@ -179,8 +189,8 @@ export const buildPaths = (name:string, urlBase:string, paths:OpenAPIPaths):Serv
 
     Object.keys(paths)
         .sort()
-        .forEach((url:string) => {
-            const path:OpenAPIPathItem = paths[url]
+        .forEach((url: string) => {
+            const path: OpenAPIPathItem = paths[url]
             // Create structure
             const urlParts = url.split('/').filter(part => !!part)
             const node = addNode(service.structure, urlParts)
@@ -206,33 +216,33 @@ export const buildPaths = (name:string, urlBase:string, paths:OpenAPIPaths):Serv
     return service
 }
 
-export const buildPathPost = (url:string, post:OpenAPIOperation):ServiceEndpoint => {
+export const buildPathPost = (url: string, post: OpenAPIOperation): ServiceEndpoint => {
     const result = buildPathBase(url, post)
     result.method = 'POST'
     result.payloadType = getPayloadType(post.requestBody)
     return result
 }
 
-export const buildPathGet = (url:string, get:OpenAPIOperation):ServiceEndpoint => {
+export const buildPathGet = (url: string, get: OpenAPIOperation): ServiceEndpoint => {
     const result = buildPathBase(url, get)
     result.method = 'GET'
     return result
 }
 
-export const buildPathPut = (url:string, put:OpenAPIOperation):ServiceEndpoint => {
+export const buildPathPut = (url: string, put: OpenAPIOperation): ServiceEndpoint => {
     const result = buildPathBase(url, put)
     result.method = 'PUT'
     result.payloadType = getPayloadType(put.requestBody)
     return result
 }
 
-export const buildPathDelete = (url:string, del:OpenAPIOperation):ServiceEndpoint => {
+export const buildPathDelete = (url: string, del: OpenAPIOperation): ServiceEndpoint => {
     const result = buildPathBase(url, del)
     result.method = 'DELETE'
     return result
 }
 
-export const buildPathBase = (url:string, method:OpenAPIOperation):ServiceEndpoint => {
+export const buildPathBase = (url: string, method: OpenAPIOperation): ServiceEndpoint => {
     const urlParams = getUrlParameters(method.parameters)
     const queryParams = getQueryParameters(method.parameters)
     const name = checkOperationId(method.operationId)
@@ -245,15 +255,15 @@ export const buildPathBase = (url:string, method:OpenAPIOperation):ServiceEndpoi
     }
 }
 
-export const checkOperationId = (operationId:string):string => {
+export const checkOperationId = (operationId: string): string => {
     if (operationId === 'delete') {
         return 'delete_'
     }
     return operationId
 }
 
-export const getUrlParameters = (parameters:(OpenAPIParameter | OpenAPIReference)[] | undefined):ServiceEndpointParameter[]|undefined => {
-    const params:ServiceEndpointParameter[]|undefined = undefined
+export const getUrlParameters = (parameters: (OpenAPIParameter | OpenAPIReference)[] | undefined): ServiceEndpointParameter[] | undefined => {
+    const params: ServiceEndpointParameter[] | undefined = undefined
     if (parameters) {
         return parameters
             // @ts-ignore
@@ -268,14 +278,14 @@ export const getUrlParameters = (parameters:(OpenAPIParameter | OpenAPIReference
     return params
 }
 
-export const getQueryParameters = (parameters:(OpenAPIParameter | OpenAPIReference)[] | undefined):ServiceEndpointParameter[]|undefined => {
-    const params:ServiceEndpointParameter[]|undefined = undefined
+export const getQueryParameters = (parameters: (OpenAPIParameter | OpenAPIReference)[] | undefined): ServiceEndpointParameter[] | undefined => {
+    const params: ServiceEndpointParameter[] | undefined = undefined
     if (parameters) {
         return parameters
             // @ts-ignore
             .filter(param => param.in === 'query')
             // @ts-ignore
-            .map((param: OpenAPIParameter):ServiceEndpointParameter => {
+            .map((param: OpenAPIParameter): ServiceEndpointParameter => {
                 return {
                     name: param.name,
                     required: Boolean(param.required),
@@ -286,8 +296,8 @@ export const getQueryParameters = (parameters:(OpenAPIParameter | OpenAPIReferen
     return params
 }
 
-export const getPayloadType = (requestBody:any):string|undefined => {
-    let payloadType:string|undefined
+export const getPayloadType = (requestBody: any): string | undefined => {
+    let payloadType: string | undefined
     if (requestBody) {
         if (requestBody.content['application/json']) {
             payloadType = getPropertyType(requestBody.content['application/json'].schema)

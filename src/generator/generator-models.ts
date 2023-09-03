@@ -25,6 +25,7 @@ export interface ServiceEndpoint {
     urlParams?: ServiceEndpointParameter[]
     queryParams?: ServiceEndpointParameter[]
     payloadType?: string
+    responseType?: string
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
 }
 

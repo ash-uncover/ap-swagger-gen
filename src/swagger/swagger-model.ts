@@ -238,7 +238,7 @@ export interface OpenAPISchema {
     xml?: OpenAPIXml
     externalDocs?: OpenAPIExternalDocumentation
 
-    type: string
+    type?: string
     title?: string
     description?: string
     properties?: JsonSchemaProperties
