@@ -1,6 +1,6 @@
 {
     "name": "@uncover/js-swagger-generator",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "author": "aSH <ash.uncover@gmail.com>",
     "description": "Typescript code generator based on openAPI format",
     "license": "MIT",
@@ -28,7 +28,7 @@
         "version": "npm run format"
     },
     "peerDependencies": {
-        "@uncover/js-utils-fetch": "0.0.3"
+        "@uncover/js-utils-fetch": "0.0.4"
     },
     "devDependencies": {
         "@types/jest": "29.5.4",
