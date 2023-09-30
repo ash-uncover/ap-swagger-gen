@@ -52,10 +52,6 @@ export const buildSchema = (key: string, schema: OpenAPISchema): Model => {
             case 'object': {
                 if (schema.properties) {
                     model.properties = buildSchemaProperties(schema.properties, schema.required)
-                } else if (schema.allOf) {
-                    const allOf = buildSchemaAllOf(schema.allOf, schema.required)
-                    model.extends = allOf.ext
-                    model.properties = allOf.properties
                 } else {
                     // This is not normal that means the interface is not defined
                     // console.warn(`### Warning: type ${key} is of type 'object' but does not define properties`)
@@ -306,7 +302,6 @@ export const getPayloadType = (requestBody: any): string | undefined => {
         } else if (requestBody.content['multipart/form-data']) {
             payloadType = 'any'
         } else {
-            console.log(requestBody)
             throw new Error('Unsupported payload type: ' + JSON.stringify(requestBody))
         }
     }

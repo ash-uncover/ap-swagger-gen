@@ -627,6 +627,7 @@ describe('generator-writer', () => {
             urlBase: 'serviceUrlBase',
             endpoints: [
                 { name: 'nodePost', description: '', url: '' },
+                { name: 'nodePatch', description: '', url: '' },
                 { name: 'nodeGet', description: '', url: '' },
                 { name: 'nodePut', description: '', url: '' },
                 { name: 'nodeDelete', description: '', url: '' }
@@ -659,6 +660,7 @@ describe('generator-writer', () => {
                 id: 'node',
                 name: 'node',
                 post: 'nodePost',
+                patch: 'nodePatch',
                 get: 'nodeGet',
                 put: 'nodePut',
                 delete: 'nodeDelete',
@@ -670,6 +672,7 @@ describe('generator-writer', () => {
             const expected = [
                 `    'node': {`,
                 `      post: () => nodePost(service),`,
+                `      patch: () => nodePatch(service),`,
                 `      get: () => nodeGet(service),`,
                 `      put: () => nodePut(service),`,
                 `      delete: () => nodeDelete(service),`,

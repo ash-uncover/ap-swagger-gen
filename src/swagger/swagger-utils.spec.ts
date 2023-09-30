@@ -190,6 +190,17 @@ describe('swagger-utils', () => {
             // Assertion
             expect(() => SwaggerUtils.buildSchema(key, schema)).toThrow()
         })
+
+        test('throws when the schema cannot be resolved', () => {
+            // Declaration
+            const key:string = 'schema'
+            const schema:OpenAPIModels.OpenAPISchema = {
+                properties: { prop: {} },
+            }
+            // Execution
+            // Assertion
+            expect(() => SwaggerUtils.buildSchema(key, schema)).toThrow()
+        })
     })
 
     // buildSchemaProperties //
