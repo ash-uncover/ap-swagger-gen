@@ -292,7 +292,7 @@ export interface OpenAPISecurityRequirement {
     [key: string]: string[]
 }
 
-// JSON Scheam partial types (no need for more so far)
+// JSON Schema partial types (no need for more so far)
 
 export interface JsonSchemaProperties {
     [key:string]: JsonSchemaProperty
