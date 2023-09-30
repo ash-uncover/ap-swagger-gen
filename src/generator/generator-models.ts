@@ -26,7 +26,7 @@ export interface ServiceEndpoint {
     queryParams?: ServiceEndpointParameter[]
     payloadType?: string
     responseType?: string
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 }
 
 export interface ServiceEndpointParameter {
@@ -40,6 +40,7 @@ export interface ServiceNode {
     name: string
     nodes: ServiceNode[]
     post?: string
+    patch?: string
     get?: string
     put?: string
     delete?: string

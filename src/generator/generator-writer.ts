@@ -174,6 +174,9 @@ export const convertStructureNode = (service: Service, depth: number, node: Serv
     if (node.post) {
         result.push(convertStructureNodeEndpoint(service, depth + 1, node, 'post'))
     }
+    if (node.patch) {
+        result.push(convertStructureNodeEndpoint(service, depth + 1, node, 'patch'))
+    }
     if (node.get) {
         result.push(convertStructureNodeEndpoint(service, depth + 1, node, 'get'))
     }
@@ -190,7 +193,7 @@ export const convertStructureNode = (service: Service, depth: number, node: Serv
     return result.join('\n')
 }
 
-export const convertStructureNodeEndpoint = (service: Service, depth: number, node: ServiceNode, endpointType: 'post' | 'get' | 'put' | 'delete'): string => {
+export const convertStructureNodeEndpoint = (service: Service, depth: number, node: ServiceNode, endpointType: 'post' | 'get' | 'put' | 'patch' | 'delete'): string => {
     const endpoint = service.endpoints.find(endpo => endpo.name === node[endpointType])
     const paramsTypes = convertEndpointParams(endpoint!, true)
     const params = convertEndpointParams(endpoint!)
