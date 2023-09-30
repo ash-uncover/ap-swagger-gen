@@ -195,6 +195,10 @@ export const buildPaths = (name: string, urlBase: string, paths: OpenAPIPaths): 
                 service.endpoints.push(buildPathPost(url, path.post))
                 node.post = checkOperationId(path.post.operationId)
             }
+            if (path.patch) {
+                service.endpoints.push(buildPathPatch(url, path.patch))
+                node.patch = checkOperationId(path.patch.operationId)
+            }
             if (path.get) {
                 service.endpoints.push(buildPathGet(url, path.get))
                 node.get = checkOperationId(path.get.operationId)
@@ -216,6 +220,13 @@ export const buildPathPost = (url: string, post: OpenAPIOperation): ServiceEndpo
     const result = buildPathBase(url, post)
     result.method = 'POST'
     result.payloadType = getPayloadType(post.requestBody)
+    return result
+}
+
+export const buildPathPatch = (url: string, patch: OpenAPIOperation): ServiceEndpoint => {
+    const result = buildPathBase(url, patch)
+    result.method = 'PATCH'
+    result.payloadType = getPayloadType(patch.requestBody)
     return result
 }
 

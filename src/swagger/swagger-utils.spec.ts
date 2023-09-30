@@ -591,6 +591,7 @@ describe('swagger-utils', () => {
         // We dont stub addNode because it does modify the structure
 
         let stubBuildPathPost:jest.SpyInstance
+        let stubBuildPathPatch:jest.SpyInstance
         let stubBuildPathGet:jest.SpyInstance
         let stubBuildPathPut:jest.SpyInstance
         let stubBuildPathDelete:jest.SpyInstance
@@ -598,12 +599,14 @@ describe('swagger-utils', () => {
 
         beforeEach(() => {
             stubBuildPathPost = jest.spyOn(SwaggerUtils, 'buildPathPost')
+            stubBuildPathPatch = jest.spyOn(SwaggerUtils, 'buildPathPatch')
             stubBuildPathGet = jest.spyOn(SwaggerUtils, 'buildPathGet')
             stubBuildPathPut = jest.spyOn(SwaggerUtils, 'buildPathPut')
             stubBuildPathDelete = jest.spyOn(SwaggerUtils, 'buildPathDelete')
             stubCheckOperationId = jest.spyOn(SwaggerUtils, 'checkOperationId')
 
             stubBuildPathPost.mockImplementation((url, post) => 'postEndpoint')
+            stubBuildPathPatch.mockImplementation((url, patch) => 'patchEndpoint')
             stubBuildPathGet.mockImplementation((url, get) => 'getEndpoint')
             stubBuildPathPut.mockImplementation((url, put) => 'putEndpoint')
             stubBuildPathDelete.mockImplementation((url, del) => 'deleteEndpoint')
@@ -612,6 +615,7 @@ describe('swagger-utils', () => {
 
         afterEach(() => {
             stubBuildPathPost.mockRestore()
+            stubBuildPathPatch.mockRestore()
             stubBuildPathGet.mockRestore()
             stubBuildPathPut.mockRestore()
             stubBuildPathDelete.mockRestore()
@@ -659,6 +663,36 @@ describe('swagger-utils', () => {
                     id: 'path',
                     name: 'path',
                     post: 'checkedOperationId',
+                    nodes: [],
+                }],
+            }
+            expect(result).toEqual(expected)
+        })
+
+        test('when there is a patch path', () => {
+            // Declaration
+            const name:string = 'name'
+            const urlBase:string = 'url'
+            const paths:any = {
+                path: {
+                    patch: {
+                        operationId: 'patchOperation'
+                    }
+                }
+            }
+            // Execution
+            const result = SwaggerUtils.buildPaths(name, urlBase, paths)
+            // Assertion
+            const expected = {
+                name,
+                urlBase,
+                endpoints: [
+                    'patchEndpoint'
+                ],
+                structure: [{
+                    id: 'path',
+                    name: 'path',
+                    patch: 'checkedOperationId',
                     nodes: [],
                 }],
             }
@@ -789,6 +823,45 @@ describe('swagger-utils', () => {
             // Assertion
             const expected = {
                 method: 'POST',
+                payloadType: 'payloadType',
+            }
+            expect(result).toEqual(expected)
+        })
+    })
+
+    // buildPathPatch //
+
+    describe('buildPathPatch', () => {
+
+        let stubBuildPathBase:jest.SpyInstance
+        let stubGetPayloadType:jest.SpyInstance
+
+        beforeEach(() => {
+            stubBuildPathBase = jest.spyOn(SwaggerUtils, 'buildPathBase')
+            stubGetPayloadType = jest.spyOn(SwaggerUtils, 'getPayloadType')
+
+            stubBuildPathBase.mockImplementation(() => ({}))
+            stubGetPayloadType.mockImplementation(() => 'payloadType')
+        })
+
+        afterEach(() => {
+            stubBuildPathBase.mockRestore()
+            stubGetPayloadType.mockRestore()
+        })
+
+        test('return the correct object', () => {
+            // Declaration
+            const url:string = 'url'
+            const patch:any = {
+                operationId: 'patch',
+                requestBody: 'body',
+                parameters: ['param'],
+            }
+            // Execution
+            const result = SwaggerUtils.buildPathPatch(url, patch)
+            // Assertion
+            const expected = {
+                method: 'PATCH',
                 payloadType: 'payloadType',
             }
             expect(result).toEqual(expected)
